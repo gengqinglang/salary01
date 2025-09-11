@@ -185,7 +185,7 @@ const CareerPlanningContent = () => {
             className="absolute top-4 left-4 z-10 w-8 h-8 bg-[#B3EBEF] rounded-full flex items-center justify-center hover:bg-[#8FD8DC] transition-colors shadow-md"
             aria-label="返回工具首页"
           >
-            <ArrowLeft className="w-4 h-4 text-white" />
+            <ArrowLeft className="w-4 h-4 text-black" />
           </button>
           
           <div className="relative py-6 text-center flex flex-col justify-center" style={{ minHeight: '80px' }}>
