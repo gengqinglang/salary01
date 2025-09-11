@@ -29,13 +29,11 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               {/* 职业规划相关路由 */}
-              <Route path="/career-planning" element={<CareerPlanningPage />} />
+              <Route path="/" element={<CareerPlanningPage />} />
+              <Route path="/career-planning" element={<Navigate to="/" replace />} />
               <Route path="/career-plan-coach" element={<CareerPlanCoachPage />} />
               <Route path="/ai-career-planning" element={<AICareerPlanningPage />} />
-              
-              {/* 默认重定向到职业规划页面 */}
-              <Route path="/" element={<Navigate to="/career-planning" replace />} />
-              <Route path="*" element={<Navigate to="/career-planning" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </BrowserRouter>
         </div>
