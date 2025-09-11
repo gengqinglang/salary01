@@ -19,6 +19,16 @@ const queryClient = new QueryClient({
   },
 });
 
+const getBaseName = () => {
+  if (import.meta.env.MODE === 'production') {
+    const segments = window.location.pathname.split('/').filter(Boolean);
+    if (window.location.hostname.endsWith('github.io') && segments.length > 0) {
+      return `/${segments[0]}`;
+    }
+  }
+  return '';
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -26,7 +36,7 @@ const App = () => (
         <div className="max-w-md mx-auto bg-white shadow-lg min-h-screen px-2 py-safe relative">
           <Toaster />
           <Sonner />
-          <BrowserRouter>
+          <BrowserRouter basename={getBaseName()}>
             <Routes>
               {/* 职业规划相关路由 */}
               <Route path="/career-planning" element={<CareerPlanningPage />} />

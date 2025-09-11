@@ -22,6 +22,7 @@ export default defineConfig(({ mode }) => ({
     react(), // 简化React插件配置
     mode === 'development' && componentTagger(),
   ].filter(Boolean),
+  base: mode === 'production' ? './' : '/',
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
