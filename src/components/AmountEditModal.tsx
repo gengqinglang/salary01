@@ -1,68 +1,59 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Edit, Check, X } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { DollarSign, X } from 'lucide-react';
 
 interface AmountEditModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (newAmount: string) => void;
-  currentAmount: string;
+  onSave: (amount: string) => void;
   itemName: string;
-  minAmount: number;
-  maxAmount: number;
-  unit?: string;
+  currentAmount: number;
 }
 
 const AmountEditModal = ({
   isOpen,
   onClose,
   onSave,
-  currentAmount,
   itemName,
-  minAmount,
-  maxAmount,
-  unit = '万'
+  currentAmount
 }: AmountEditModalProps) => {
-  const [inputValue, setInputValue] = useState(currentAmount);
+  const [amount, setAmount] = useState(currentAmount.toString());
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (isOpen) {
-      setInputValue(currentAmount);
+      setAmount(currentAmount.toString());
       setError('');
     }
   }, [isOpen, currentAmount]);
 
-  const validateAmount = (value: string): boolean => {
-    const numValue = parseFloat(value);
-    if (isNaN(numValue)) {
-      setError('请输入有效的数字');
+  const validateInput = (): boolean => {
+    const amountNum = parseFloat(amount);
+    if (isNaN(amountNum) || amountNum < 0) {
+      setError('请输入有效的金额');
       return false;
-    }
-    if (numValue < minAmount || numValue > maxAmount) {
-      setError(`金额范围应在 ${minAmount}-${maxAmount}${unit} 之间`);
+    } else if (amountNum > 10000) {
+      setError('金额不能超过10000万元');
       return false;
     }
     setError('');
     return true;
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setInputValue(value);
+    setAmount(value);
     if (value) {
-      validateAmount(value);
-    } else {
-      setError('');
+      validateInput();
     }
   };
 
   const handleSave = () => {
-    if (validateAmount(inputValue)) {
-      onSave(inputValue);
+    if (validateInput()) {
+      onSave(amount);
       onClose();
     }
   };
@@ -80,28 +71,28 @@ const AmountEditModal = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Edit className="w-5 h-5 text-blue-600" />
-            修改支出金额
+            <DollarSign className="w-5 h-5 text-green-600" />
+            修改{itemName}
           </DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
-              {itemName}
-            </label>
+            <Label className="text-sm font-medium text-gray-700">
+              金额
+            </Label>
             <div className="relative">
               <Input
                 type="number"
-                value={inputValue}
-                onChange={handleInputChange}
+                value={amount}
+                onChange={handleAmountChange}
                 onKeyDown={handleKeyDown}
-                placeholder={`${minAmount}-${maxAmount}`}
-                className={`pr-8 text-base ${error ? 'border-red-500 focus-visible:ring-red-500' : 'border-gray-300'}`}
+                placeholder="0-10000"
+                className={`pr-12 text-base ${error ? 'border-red-500 focus-visible:ring-red-500' : 'border-gray-300'}`}
                 autoFocus
               />
               <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-500">
-                {unit}
+                万元
               </span>
             </div>
             {error && (
@@ -110,21 +101,6 @@ const AmountEditModal = ({
                 {error}
               </p>
             )}
-            {!error && inputValue && (
-              <p className="text-sm text-green-600 flex items-center gap-1">
-                <Check className="w-4 h-4" />
-                金额有效
-              </p>
-            )}
-          </div>
-          
-          <div className="p-3 bg-gray-50 rounded-lg">
-            <p className="text-xs text-gray-600">
-              建议范围：{minAmount}-{maxAmount}{unit}
-            </p>
-            <p className="text-xs text-gray-500 mt-1">
-              您可以根据个人情况在此范围内调整
-            </p>
           </div>
         </div>
 
@@ -138,7 +114,7 @@ const AmountEditModal = ({
           </Button>
           <Button
             onClick={handleSave}
-            disabled={!!error || !inputValue}
+            disabled={!!error || !amount}
             className="flex-1 bg-gradient-to-r from-[#CCE9B5] to-[#B8E0A1] text-gray-900 hover:from-[#BBE3A8] hover:to-[#A5D094]"
           >
             确认修改

@@ -16,7 +16,6 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useMembership } from '@/components/membership/MembershipProvider';
 
 // 定义收入项目的统一类型
 interface IncomeItem {
@@ -629,11 +628,8 @@ const IncomeExpenditureDisplay: React.FC<IncomeExpenditureDisplayProps> = ({
           isOpen={editModalOpen}
           onClose={handleCloseModal}
           onSave={handleSaveEdit}
-          currentAmount={editingItem.amount.toString()}
+          currentAmount={editingItem.amount}
           itemName={editingItem.name}
-          minAmount={0}
-          maxAmount={10000}
-          unit="万"
         />
       )}
 
