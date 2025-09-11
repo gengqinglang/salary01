@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Coins, User, Users } from 'lucide-react';
+import { ArrowRight, Coins, User, Users, ArrowLeft } from 'lucide-react';
 import SimpleCareerIncomeForm from '@/components/career/SimpleCareerIncomeForm';
 import CareerSummaryStats from '@/components/career/CareerSummaryStats';
 import { SimplifiedCareerDataProvider, useCareerData } from '@/components/career/SimplifiedCareerDataProvider';
@@ -109,6 +109,10 @@ const CareerPlanningContent = () => {
     navigate('/future-income');
   };
 
+  const handleBackToHomepage = () => {
+    window.location.href = 'https://gengqinglang.github.io/financial-tools-homepage/';
+  };
+
   const handlePersonalDataChange = (data: CareerIncomeData) => {
     setPersonalData(data);
     // 数据变化时重置保存状态
@@ -175,6 +179,15 @@ const CareerPlanningContent = () => {
       <div className="relative flex flex-col bg-white/90 backdrop-blur-xl flex-1">
         {/* 标题区域 */}
         <div className="relative overflow-hidden bg-gradient-to-br from-[#B3EBEF]/20 via-white/60 to-[#B3EBEF]/20 -mx-2">
+          {/* 返回按钮 */}
+          <button
+            onClick={handleBackToHomepage}
+            className="absolute top-4 left-4 z-10 w-8 h-8 bg-[#B3EBEF] rounded-full flex items-center justify-center hover:bg-[#8FD8DC] transition-colors shadow-md"
+            aria-label="返回工具首页"
+          >
+            <ArrowLeft className="w-4 h-4 text-white" />
+          </button>
+          
           <div className="relative py-6 text-center flex flex-col justify-center" style={{ minHeight: '80px' }}>
             <div className="flex items-center justify-center mb-2">
               <h1 className="text-lg font-bold text-gray-900 tracking-tight">
