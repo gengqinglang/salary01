@@ -6,6 +6,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  base: '/salary01/', // 添加GitHub Pages基础路径
   server: {
     host: "::",
     port: 8080,
@@ -29,6 +30,8 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     // 简化构建配置，移除可能导致失败的复杂配置
+    outDir: 'dist', // 明确指定输出目录
+    assetsDir: 'assets', // 指定资源目录
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       onwarn(warning, warn) {
