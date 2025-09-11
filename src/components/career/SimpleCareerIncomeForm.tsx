@@ -44,7 +44,7 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
 }) => {
   const [fluctuations, setFluctuations] = useState<IncomeFluctuation[]>(data.fluctuations || []);
   const [growthRateInputs, setGrowthRateInputs] = useState<Record<string, string>>({});
-  const [showAllYears, setShowAllYears] = useState(false);
+  const [showAllYears, setShowAllYears] = useState(true);
 
   // 同步本地输入态与波动配置
   useEffect(() => {
@@ -509,71 +509,45 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                     <TableHead className="text-center w-1/3">增长率（%）</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
-                  {incomeTable
-                    .filter((_, index) => {
-                      // If total years <= 3, show all
-                      if (incomeTable.length <= 3) return true;
-                      // If showAllYears is true, show all
-                      if (showAllYears) return true;
-                      // Otherwise, show only the last 3 years
-                      return index >= incomeTable.length - 3;
-                    })
-                    .map((row) => {
-                      // 检查当前年份是否在波动期内
-                      const isInFluctuationPeriod = data.incomeChange === 'fluctuation' && 
-                        fluctuations.some(f => row.year >= f.startYear && row.year <= f.endYear);
-                      
-                      return (
-                        <TableRow 
-                          key={row.year}
-                          className={isInFluctuationPeriod ? "bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-400" : ""}
-                        >
+                 <TableBody>
+                   {incomeTable
+                     .map((row) => {
+                       // 检查当前年份是否在波动期内
+                       const isInFluctuationPeriod = data.incomeChange === 'fluctuation' && 
+                         fluctuations.some(f => row.year >= f.startYear && row.year <= f.endYear);
+                       
+                       return (
+                         <TableRow 
+                           key={row.year}
+                           className={isInFluctuationPeriod ? "bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-400" : ""}
+                         >
+                            <TableCell className={`text-center ${isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
+                              {row.year}岁
+                              {isInFluctuationPeriod && (
+                                <span className={`ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs border ${
+                                  row.growthRate > 0 
+                                    ? 'bg-green-100 text-green-800 border-green-200' 
+                                    : 'bg-red-100 text-red-800 border-red-200'
+                                }`}>
+                                  {row.growthRate > 0 ? '收入上升' : '收入下降'}
+                                </span>
+                              )}
+                           </TableCell>
                            <TableCell className={`text-center ${isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
-                             {row.year}岁
-                             {isInFluctuationPeriod && (
-                               <span className={`ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs border ${
-                                 row.growthRate > 0 
-                                   ? 'bg-green-100 text-green-800 border-green-200' 
-                                   : 'bg-red-100 text-red-800 border-red-200'
-                               }`}>
-                                 {row.growthRate > 0 ? '收入上升' : '收入下降'}
-                               </span>
-                             )}
-                          </TableCell>
-                          <TableCell className={`text-center ${isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
-                            {row.income.toFixed(1)}
-                          </TableCell>
-                          <TableCell className={`text-center ${isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
-                            {row.growthRate.toFixed(1)}%
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                </TableBody>
+                             {row.income.toFixed(1)}
+                           </TableCell>
+                           <TableCell className={`text-center ${isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
+                             {row.growthRate.toFixed(1)}%
+                           </TableCell>
+                         </TableRow>
+                       );
+                     })}
+                 </TableBody>
               </Table>
-            </div>
-            
-            {/* Table control bar at bottom - only show if there are more than 3 years */}
-            {incomeTable.length > 3 && (
-              <div className="flex items-center justify-center p-3 bg-[#B3EBEF]/30 border-t border-[#B3EBEF]/50">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowAllYears(!showAllYears)}
-                  className="text-[#01BCD6] hover:text-[#01BCD6]/80 hover:bg-[#CAF4F7]/50 flex items-center gap-2"
-                >
-                  {showAllYears ? '收起全部' : '展开全部'}
-                  {showAllYears ? 
-                    <ChevronUp className="w-4 h-4" /> : 
-                    <ChevronDown className="w-4 h-4" />
-                  }
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
+             </div>
+           </CardContent>
+         </Card>
+       )}
     </>
   );
 };
