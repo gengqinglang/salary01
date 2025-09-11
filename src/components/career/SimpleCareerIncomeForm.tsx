@@ -378,7 +378,7 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                
                {fluctuations.map((fluctuation) => (
                  <Card key={fluctuation.id} className="p-3">
-                   <div className="grid grid-cols-4 gap-2 items-end px-3">
+                   <div className="grid grid-cols-4 gap-2 items-end">
                      <div>
                        <Label className="text-xs">开始年龄</Label>
                        <Select 
