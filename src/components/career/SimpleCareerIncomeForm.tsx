@@ -442,15 +442,17 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                          className="border-2 border-[#B3EBEF] focus:border-[#B3EBEF] focus:ring-[#B3EBEF]/40"
                        />
                      </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeFluctuation(fluctuation.id)}
-                        className="text-red-500 hover:text-red-700 w-1/2"
-                     >
-                       <Trash2 className="w-4 h-4" />
-                     </Button>
+                      <div className="flex justify-start">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeFluctuation(fluctuation.id)}
+                          className="text-red-500 hover:text-red-700 w-auto px-2"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                    </div>
                  </Card>
                ))}
