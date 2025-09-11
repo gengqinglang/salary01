@@ -276,25 +276,6 @@ const CareerPlanningContent = () => {
           </div>
         </div>
 
-        <div className="pb-3 px-0 -mt-4">
-          {!isBothFormsValid() && (
-            <div className="mb-3">
-              <MobileHint 
-                message={getHintMessage()}
-                variant="warning"
-              />
-            </div>
-          )}
-          
-          <Button 
-            onClick={goToNext} 
-            disabled={!isBothFormsValid()}
-            className="w-full py-3 bg-[#B3EBEF] hover:bg-[#8FD8DC] text-gray-800 font-bold rounded-xl text-sm shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#B3EBEF]"
-          >
-            确认规划并继续
-            <ArrowRight className="ml-2 w-4 h-4" />
-          </Button>
-        </div>
       </div>
     </div>
   );
