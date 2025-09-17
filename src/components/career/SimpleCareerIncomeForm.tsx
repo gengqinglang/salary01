@@ -45,6 +45,7 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
   const [fluctuations, setFluctuations] = useState<IncomeFluctuation[]>(data.fluctuations || []);
   const [growthRateInputs, setGrowthRateInputs] = useState<Record<string, string>>({});
   const [showAllYears, setShowAllYears] = useState(true);
+  const [retirementSalaryEdited, setRetirementSalaryEdited] = useState(false);
 
   // 同步本地输入态与波动配置
   useEffect(() => {
@@ -501,8 +502,11 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                  id="expectedRetirementSalary"
                  type="number"
                  step="1"
-                 value={data.expectedRetirementSalary !== undefined ? data.expectedRetirementSalary.toString() : Math.round((data.currentIncome || 0) * 10000 / 12 * 0.3).toString()}
+                 value={retirementSalaryEdited ? 
+                   (data.expectedRetirementSalary !== undefined ? data.expectedRetirementSalary.toString() : '') :
+                   (data.expectedRetirementSalary !== undefined ? data.expectedRetirementSalary.toString() : Math.round((data.currentIncome || 0) * 10000 / 12 * 0.3).toString())}
                  onChange={(e) => {
+                   setRetirementSalaryEdited(true);
                    const value = e.target.value;
                    if (value === '') {
                      handleDataChange('expectedRetirementSalary', undefined);
