@@ -221,6 +221,143 @@ const CareerPlanningContent = () => {
               />
             </div>
           </div>
+          
+          {/* 调试模块：本人工资收入计算过程 */}
+          <div className="mt-4 mx-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <h3 className="text-sm font-bold text-gray-800 mb-3">🔍 本人工资收入计算过程（调试用）</h3>
+            <div className="space-y-3 text-xs text-gray-700">
+              {/* 基本信息 */}
+              <div className="bg-white p-3 rounded border">
+                <div className="font-semibold mb-2">基本信息：</div>
+                <div>当前年龄：{personalData.currentAge}岁</div>
+                <div>当前收入：{personalData.currentIncome}万元/年</div>
+                <div>退休年龄：{personalData.retirementAge}岁</div>
+                <div>预计退休工资：{personalData.expectedRetirementSalary || '未设置'}元/月</div>
+                <div>收入变化：{
+                  personalData.incomeChange === 'continuous-growth' ? '持续增长' :
+                  personalData.incomeChange === 'stable' ? '保持不变' :
+                  personalData.incomeChange === 'continuous-decline' ? '持续下降' :
+                  personalData.incomeChange === 'fluctuation' ? '收入波动' : '未知'
+                }</div>
+              </div>
+
+              {/* 退休前收入计算 */}
+              <div className="bg-white p-3 rounded border">
+                <div className="font-semibold mb-2">退休前收入计算（{personalData.currentAge}岁 到 {personalData.retirementAge-1}岁）：</div>
+                {(() => {
+                  const years = personalData.retirementAge - personalData.currentAge;
+                  let preRetirementTotal = 0;
+                  const yearlyDetails = [];
+                  
+                  for (let i = 0; i < years; i++) {
+                    const year = personalData.currentAge + i;
+                    let income = personalData.currentIncome;
+                    
+                    if (personalData.incomeChange === 'continuous-growth') {
+                      const rate = (personalData.continuousGrowthRate || 1) / 100;
+                      income = personalData.currentIncome * Math.pow(1 + rate, i);
+                    } else if (personalData.incomeChange === 'continuous-decline') {
+                      const rate = (personalData.continuousDeclineRate || 1) / 100;
+                      income = personalData.currentIncome * Math.pow(1 - rate, i);
+                    } else if (personalData.incomeChange === 'fluctuation') {
+                      const f = personalData.fluctuations.find(f => year >= f.startYear && year <= f.endYear);
+                      if (f) {
+                        const yearsInPeriod = year - f.startYear;
+                        income = personalData.currentIncome * Math.pow(1 + f.growthRate / 100, yearsInPeriod);
+                      }
+                    }
+                    
+                    preRetirementTotal += income;
+                    if (i < 3 || i >= years - 3) { // 只显示前3年和后3年
+                      yearlyDetails.push(`${year}岁: ${income.toFixed(1)}万元`);
+                    } else if (i === 3) {
+                      yearlyDetails.push('...');
+                    }
+                  }
+                  
+                  return (
+                    <div>
+                      <div>工作年数：{years}年</div>
+                      <div>年度收入详情：{yearlyDetails.join(', ')}</div>
+                      <div className="font-bold">退休前总收入：{preRetirementTotal.toFixed(1)}万元</div>
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* 退休后收入计算 */}
+              <div className="bg-white p-3 rounded border">
+                <div className="font-semibold mb-2">退休后收入计算（{personalData.retirementAge}岁 到 85岁）：</div>
+                {(() => {
+                  if (!personalData.expectedRetirementSalary || personalData.expectedRetirementSalary <= 0) {
+                    return <div className="text-gray-500">未设置退休工资，退休后收入为0</div>;
+                  }
+                  
+                  const retirementYears = 85 - personalData.retirementAge + 1;
+                  const monthlyRetirement = personalData.expectedRetirementSalary;
+                  const annualRetirement = monthlyRetirement * 12;
+                  const totalRetirementIncome = (annualRetirement / 10000) * retirementYears;
+                  
+                  return (
+                    <div>
+                      <div>退休年数：{retirementYears}年</div>
+                      <div>月退休工资：{monthlyRetirement}元</div>
+                      <div>年退休收入：{monthlyRetirement} × 12 = {annualRetirement.toLocaleString()}元 = {(annualRetirement/10000).toFixed(1)}万元</div>
+                      <div className="font-bold">退休后总收入：{(annualRetirement/10000).toFixed(1)} × {retirementYears} = {totalRetirementIncome.toFixed(1)}万元</div>
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* 总收入汇总 */}
+              <div className="bg-blue-50 p-3 rounded border border-blue-200">
+                <div className="font-semibold mb-2 text-blue-800">总收入汇总：</div>
+                {(() => {
+                  const computed = computeProgressiveIncomeFromForm(personalData);
+                  const years = personalData.retirementAge - personalData.currentAge;
+                  let preRetirementTotal = 0;
+                  
+                  // 重新计算退休前收入
+                  for (let i = 0; i < years; i++) {
+                    const year = personalData.currentAge + i;
+                    let income = personalData.currentIncome;
+                    
+                    if (personalData.incomeChange === 'continuous-growth') {
+                      const rate = (personalData.continuousGrowthRate || 1) / 100;
+                      income = personalData.currentIncome * Math.pow(1 + rate, i);
+                    } else if (personalData.incomeChange === 'continuous-decline') {
+                      const rate = (personalData.continuousDeclineRate || 1) / 100;
+                      income = personalData.currentIncome * Math.pow(1 - rate, i);
+                    } else if (personalData.incomeChange === 'fluctuation') {
+                      const f = personalData.fluctuations.find(f => year >= f.startYear && year <= f.endYear);
+                      if (f) {
+                        const yearsInPeriod = year - f.startYear;
+                        income = personalData.currentIncome * Math.pow(1 + f.growthRate / 100, yearsInPeriod);
+                      }
+                    }
+                    preRetirementTotal += income;
+                  }
+                  
+                  // 计算退休后收入
+                  let postRetirementTotal = 0;
+                  if (personalData.expectedRetirementSalary && personalData.expectedRetirementSalary > 0) {
+                    const retirementYears = 85 - personalData.retirementAge + 1;
+                    const annualRetirementIncome = personalData.expectedRetirementSalary * 12;
+                    postRetirementTotal = (annualRetirementIncome / 10000) * retirementYears;
+                  }
+                  
+                  return (
+                    <div className="text-blue-800">
+                      <div>退休前收入：{preRetirementTotal.toFixed(1)}万元</div>
+                      <div>退休后收入：{postRetirementTotal.toFixed(1)}万元</div>
+                      <div className="font-bold text-lg">总收入：{(preRetirementTotal + postRetirementTotal).toFixed(1)}万元 = {Math.round((preRetirementTotal + postRetirementTotal) * 10000).toLocaleString()}元</div>
+                      <div className="text-sm">函数返回值：{computed.toLocaleString()}元</div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="flex-1 overflow-visible pb-20">
