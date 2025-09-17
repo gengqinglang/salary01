@@ -501,7 +501,6 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
           </CardHeader>
           <CardContent className="p-6">
             <div className="text-center text-gray-500 py-8">
-              <div className="mb-2">📊</div>
               <p>请完成上方必输项目后查看收入预测表</p>
             </div>
           </CardContent>
