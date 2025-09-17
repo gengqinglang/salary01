@@ -174,11 +174,6 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
            (formData.incomeChange !== 'fluctuation' || fluctuations.length > 0);
   };
 
-  const handleSave = () => {
-    if (isFormValid() && onSave) {
-      onSave();
-    }
-  };
 
   return (
     <>
@@ -495,17 +490,6 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
             </div>
            </>
            )}
-           
-           {/* 保存按钮 */}
-            <div className="pt-4 border-t border-gray-100">
-              <Button
-                onClick={handleSave}
-                disabled={isSaved}
-                className={`w-full px-6 py-2 rounded-lg font-medium transition-colors bg-[#B3EBEF] hover:bg-[#8FD8DC] text-gray-800`}
-              >
-                {isSaved ? '✓ 已保存' : '确认'}
-              </Button>
-            </div>
          </CardContent>
       </Card>
 
