@@ -242,6 +242,26 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
           {/* 未退休状态下的详细信息录入 */}
           {(data.currentStatus || 'not-retired') === 'not-retired' && (
             <>
+              {/* 年龄录入 */}
+              <div className="space-y-2 relative z-10">
+                <Label htmlFor="currentAge" className="text-gray-700 font-medium">本人年龄</Label>
+                <Select 
+                  value={data.currentAge?.toString() || "30"} 
+                  onValueChange={(value) => handleDataChange('currentAge', parseInt(value))}
+                >
+                  <SelectTrigger className="border-2 border-[#B3EBEF] focus:border-[#B3EBEF] focus:ring-[#B3EBEF]/40">
+                    <SelectValue placeholder="请选择年龄" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60 overflow-y-auto bg-white z-50">
+                    {Array.from({ length: 68 }, (_, i) => i + 18).map((age) => (
+                      <SelectItem key={age} value={age.toString()}>
+                        {age}岁
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="grid grid-cols-2 gap-4 relative z-10">
             <div className="space-y-2">
               <Label htmlFor="currentIncome" className="text-gray-700 font-medium">当前收入（万元/年）</Label>
