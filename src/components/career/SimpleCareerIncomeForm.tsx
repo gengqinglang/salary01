@@ -501,7 +501,7 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                  id="expectedRetirementSalary"
                  type="number"
                  step="1"
-                 value={data.expectedRetirementSalary !== undefined ? data.expectedRetirementSalary.toString() : ''}
+                 value={data.expectedRetirementSalary !== undefined ? data.expectedRetirementSalary.toString() : Math.round((data.currentIncome || 0) * 10000 / 12 * 0.3).toString()}
                  onChange={(e) => {
                    const value = e.target.value;
                    if (value === '') {
@@ -513,7 +513,7 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                      }
                    }
                  }}
-                 placeholder={`建议值: ${Math.round((data.currentIncome || 0) * 10000 / 12 * 0.3)}`}
+                 placeholder="0"
                  className="border-2 border-[#B3EBEF] focus:border-[#B3EBEF] focus:ring-[#B3EBEF]/40"
                />
             </div>
