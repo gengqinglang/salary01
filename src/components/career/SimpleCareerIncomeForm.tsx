@@ -64,10 +64,17 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
       setShowAllYears(false);
     }
     
-    onChange({
+    const newData = {
       ...data,
       [field]: value
-    });
+    };
+    
+    onChange(newData);
+    
+    // Auto-save when form becomes valid
+    if (isFormValidWithData(newData) && onSave) {
+      onSave();
+    }
   };
 
   const addFluctuation = () => {
@@ -155,12 +162,16 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
 
   // 验证表单完整性
   const isFormValid = () => {
-    if (data.currentStatus === 'retired') {
-      return (data.retirementIncome || 0) >= 0;
+    return isFormValidWithData(data);
+  };
+
+  const isFormValidWithData = (formData: CareerIncomeData) => {
+    if (formData.currentStatus === 'retired') {
+      return (formData.retirementIncome || 0) >= 0;
     }
-    return data.currentIncome >= 0 && 
-           data.retirementAge > data.currentAge &&
-           (data.incomeChange !== 'fluctuation' || fluctuations.length > 0);
+    return formData.currentIncome > 0 && 
+           formData.retirementAge > formData.currentAge &&
+           (formData.incomeChange !== 'fluctuation' || fluctuations.length > 0);
   };
 
   const handleSave = () => {
