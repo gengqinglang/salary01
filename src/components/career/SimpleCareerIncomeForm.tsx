@@ -57,6 +57,15 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
     });
   }, [fluctuations]);
 
+  // 根据年龄自动设置当前状态
+  useEffect(() => {
+    const age = data.currentAge || 30;
+    const newStatus = age >= 60 ? 'retired' : 'not-retired';
+    if (data.currentStatus !== newStatus) {
+      handleDataChange('currentStatus', newStatus);
+    }
+  }, [data.currentAge]);
+
   const handleDataChange = (field: keyof CareerIncomeData, value: any) => {
     // Reset showAllYears when key inputs change
     if (field === 'currentIncome' || field === 'retirementAge' || field === 'incomeChange' || 
