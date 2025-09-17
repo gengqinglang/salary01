@@ -497,25 +497,25 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
             {/* 预计退休工资 */}
             <div className="space-y-2 relative z-10">
               <Label htmlFor="expectedRetirementSalary" className="text-gray-700 font-medium">预计退休工资（元/月）</Label>
-              <Input
-                id="expectedRetirementSalary"
-                type="number"
-                step="1"
-                value={data.expectedRetirementSalary !== undefined && data.expectedRetirementSalary !== null ? data.expectedRetirementSalary.toString() : Math.round((data.currentIncome || 0) * 10000 / 12 * 0.3).toString()}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (value === '') {
-                    handleDataChange('expectedRetirementSalary', undefined);
-                  } else {
-                    const numValue = parseFloat(value);
-                    if (!isNaN(numValue)) {
-                      handleDataChange('expectedRetirementSalary', numValue);
-                    }
-                  }
-                }}
-                placeholder="0"
-                className="border-2 border-[#B3EBEF] focus:border-[#B3EBEF] focus:ring-[#B3EBEF]/40"
-              />
+               <Input
+                 id="expectedRetirementSalary"
+                 type="number"
+                 step="1"
+                 value={data.expectedRetirementSalary !== undefined ? data.expectedRetirementSalary.toString() : ''}
+                 onChange={(e) => {
+                   const value = e.target.value;
+                   if (value === '') {
+                     handleDataChange('expectedRetirementSalary', undefined);
+                   } else {
+                     const numValue = parseFloat(value);
+                     if (!isNaN(numValue)) {
+                       handleDataChange('expectedRetirementSalary', numValue);
+                     }
+                   }
+                 }}
+                 placeholder={`建议值: ${Math.round((data.currentIncome || 0) * 10000 / 12 * 0.3)}`}
+                 className="border-2 border-[#B3EBEF] focus:border-[#B3EBEF] focus:ring-[#B3EBEF]/40"
+               />
             </div>
            </>
            )}
