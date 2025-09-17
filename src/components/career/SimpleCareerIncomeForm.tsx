@@ -126,7 +126,8 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
     const table = [];
     const years = data.retirementAge - data.currentAge;
     
-    for (let i = 0; i <= years; i++) {
+    // 计算退休前收入（不包含退休当年）
+    for (let i = 0; i < years; i++) {
       const year = data.currentAge + i;
       let income = data.currentIncome;
       let growthRate = 0;
@@ -161,8 +162,22 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
       table.push({
         year,
         income: Math.round(income * 100) / 100,
-        growthRate
+        growthRate,
+        isRetired: false
       });
+    }
+    
+    // 计算退休后收入（从退休年龄到85岁）
+    if (data.expectedRetirementSalary && data.expectedRetirementSalary > 0) {
+      for (let i = data.retirementAge; i <= 85; i++) {
+        const annualRetirementIncome = (data.expectedRetirementSalary * 12) / 10000; // 转换为万元
+        table.push({
+          year: i,
+          income: Math.round(annualRetirementIncome * 100) / 100,
+          growthRate: 0, // 退休收入一般不变
+          isRetired: true
+        });
+      }
     }
     
     return table;
@@ -555,6 +570,7 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                 </TableHeader>
                  <TableBody>
                    {incomeTable
+                     .slice(0, showAllYears ? undefined : 10)
                      .map((row) => {
                        // 检查当前年份是否在波动期内
                        const isInFluctuationPeriod = data.incomeChange === 'fluctuation' && 
@@ -563,11 +579,22 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                        return (
                          <TableRow 
                            key={row.year}
-                           className={isInFluctuationPeriod ? "bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-400" : ""}
+                           className={
+                             row.isRetired 
+                               ? "bg-gradient-to-r from-blue-50 to-cyan-50 border-l-4 border-blue-400"
+                               : isInFluctuationPeriod 
+                                 ? "bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-400" 
+                                 : ""
+                           }
                          >
-                            <TableCell className={`text-center ${isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
+                            <TableCell className={`text-center ${row.isRetired ? 'font-medium text-blue-800' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
                               {row.year}岁
-                              {isInFluctuationPeriod && (
+                              {row.isRetired && (
+                                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-blue-100 text-blue-800 border border-blue-200">
+                                  退休收入
+                                </span>
+                              )}
+                              {!row.isRetired && isInFluctuationPeriod && (
                                 <span className={`ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs border ${
                                   row.growthRate > 0 
                                     ? 'bg-green-100 text-green-800 border-green-200' 
@@ -577,15 +604,43 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                                 </span>
                               )}
                            </TableCell>
-                           <TableCell className={`text-center ${isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
+                           <TableCell className={`text-center ${row.isRetired ? 'font-medium text-blue-800' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
                              {row.income.toFixed(1)}
                            </TableCell>
-                           <TableCell className={`text-center ${isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
+                           <TableCell className={`text-center ${row.isRetired ? 'font-medium text-blue-800' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
                              {row.growthRate.toFixed(1)}%
                            </TableCell>
                          </TableRow>
                        );
                      })}
+                   {!showAllYears && incomeTable.length > 10 && (
+                     <TableRow>
+                       <TableCell colSpan={3} className="text-center">
+                         <Button 
+                           variant="ghost" 
+                           onClick={() => setShowAllYears(true)}
+                           className="text-[#01BCD6] hover:text-[#01BCD6] hover:bg-[#CAF4F7]/30"
+                         >
+                           <ChevronDown className="w-4 h-4 mr-1" />
+                           显示全部 {incomeTable.length} 年数据
+                         </Button>
+                       </TableCell>
+                     </TableRow>
+                   )}
+                   {showAllYears && incomeTable.length > 10 && (
+                     <TableRow>
+                       <TableCell colSpan={3} className="text-center">
+                         <Button 
+                           variant="ghost" 
+                           onClick={() => setShowAllYears(false)}
+                           className="text-[#01BCD6] hover:text-[#01BCD6] hover:bg-[#CAF4F7]/30"
+                         >
+                           <ChevronUp className="w-4 h-4 mr-1" />
+                           收起显示
+                         </Button>
+                       </TableCell>
+                     </TableRow>
+                   )}
                  </TableBody>
               </Table>
              </div>
