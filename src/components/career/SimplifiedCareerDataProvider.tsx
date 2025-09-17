@@ -266,8 +266,10 @@ export const SimplifiedCareerDataProvider: React.FC<CareerDataProviderProps> = (
 
   // Progressive income calculation - only calculate when current income is provided
   const calculateProgressiveIncome = useCallback((job: string, level: string, currentIncome: string, status: string): number => {
-    // If retired, return 0
+    // If retired, need retirement income data to calculate remaining income
     if (status === 'retired') {
+      // For now, return 0 since we don't have retirement income context here
+      // This function is mainly used for preview calculations
       return 0;
     }
     
@@ -279,18 +281,24 @@ export const SimplifiedCareerDataProvider: React.FC<CareerDataProviderProps> = (
     // Use provided current income
     const income = parseFloat(currentIncome) * 10000;
     
-    // Simple 30-year career estimation with 3% annual growth
+    // Simple 30-year career estimation with 3% annual growth (退休前收入)
     const years = 30;
     const annualGrowth = 0.03;
-    let totalIncome = 0;
+    let totalPreRetirementIncome = 0;
     let currentYearIncome = income;
     
     for (let i = 0; i < years; i++) {
-      totalIncome += currentYearIncome;
+      totalPreRetirementIncome += currentYearIncome;
       currentYearIncome *= (1 + annualGrowth);
     }
     
-    return totalIncome;
+    // 退休后收入估算（从60岁到85岁，假设退休收入为当前收入的30%）
+    const retirementYears = 85 - 60 + 1; // 26年
+    const estimatedRetirementSalary = income * 0.3 / 12; // 月退休收入（元/月）
+    const annualRetirementIncome = estimatedRetirementSalary * 12; // 年退休收入
+    const totalPostRetirementIncome = annualRetirementIncome * retirementYears;
+    
+    return totalPreRetirementIncome + totalPostRetirementIncome;
   }, [getBaseSalary]);
 
   // Calculate completeness percentage

@@ -22,6 +22,7 @@ interface CareerIncomeData {
     endYear: number;
     growthRate: number;
   }>;
+  expectedRetirementSalary?: number; // 预计退休工资（元/月）
 }
 
 const CareerPlanningContent = () => {
@@ -80,7 +81,9 @@ const CareerPlanningContent = () => {
     if (!d || d.currentIncome <= 0 || d.retirementAge <= d.currentAge) return 0;
     let totalWan = 0;
     const years = d.retirementAge - d.currentAge;
-    for (let i = 0; i <= years; i++) {
+    
+    // 计算退休前收入（不包含退休当年）
+    for (let i = 0; i < years; i++) {
       const year = d.currentAge + i;
       let incomeWan = d.currentIncome;
       if (d.incomeChange === 'continuous-growth') {
@@ -102,6 +105,14 @@ const CareerPlanningContent = () => {
       }
       totalWan += incomeWan;
     }
+    
+    // 计算退休后收入（从退休年龄到85岁）
+    if (d.expectedRetirementSalary && d.expectedRetirementSalary > 0) {
+      const retirementYears = 85 - d.retirementAge + 1; // 从退休年龄到85岁（包含退休当年）
+      const annualRetirementIncome = d.expectedRetirementSalary * 12; // 月薪转年薪（元）
+      totalWan += (annualRetirementIncome / 10000) * retirementYears; // 转换为万元
+    }
+    
     return Math.round(totalWan * 10000);
   };
 
