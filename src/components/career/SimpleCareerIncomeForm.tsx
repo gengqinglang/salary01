@@ -499,7 +499,7 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
           <CardHeader className="pb-4">
             <CardTitle className="text-center text-gray-700">工资收入速算表</CardTitle>
           </CardHeader>
-          <CardContent className="p-6">
+          <CardContent className="px-6">
             <div className="text-center text-gray-500 py-4 -mt-2">
               <p>请完成上方必输项目后查看收入预测表</p>
             </div>
