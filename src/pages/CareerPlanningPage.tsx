@@ -220,42 +220,10 @@ const CareerPlanningContent = () => {
                 <TabsTrigger value="personal" className="flex items-center gap-2 data-[state=active]:bg-[#B3EBEF] data-[state=active]:text-gray-800 text-gray-700 font-medium relative">
                   <User className="w-4 h-4" />
                   <span>本人</span>
-                  {personalSaved && (
-                    <Badge
-                      variant="secondary"
-                      className="ml-1 text-xs px-1.5 py-0.5 bg-white text-[#01BCD6] border border-[#01BCD6]"
-                    >
-                      已填写
-                    </Badge>
-                  )}
-                  {!personalSaved && personalCompleteness > 0 && (
-                    <Badge
-                      variant="secondary"
-                      className="ml-1 text-xs px-1.5 py-0.5 bg-white border border-coral-400 text-coral-400"
-                    >
-                      待填写
-                    </Badge>
-                  )}
                 </TabsTrigger>
                 <TabsTrigger value="partner" className="flex items-center gap-2 data-[state=active]:bg-[#B3EBEF] data-[state=active]:text-gray-800 text-gray-700 font-medium relative">
                   <Users className="w-4 h-4" />
                   <span>伴侣</span>
-                  {partnerSaved && (
-                    <Badge
-                      variant="secondary"
-                      className="ml-1 text-xs px-1.5 py-0.5 bg-white text-[#01BCD6] border border-[#01BCD6]"
-                    >
-                      已填写
-                    </Badge>
-                  )}
-                  {!partnerSaved && partnerCompleteness > 0 && (
-                    <Badge
-                      variant="secondary"
-                      className="ml-1 text-xs px-1.5 py-0.5 bg-white border border-coral-400 text-coral-400"
-                    >
-                      待填写
-                    </Badge>
-                  )}
                 </TabsTrigger>
               </TabsList>
               
