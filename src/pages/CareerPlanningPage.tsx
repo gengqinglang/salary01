@@ -239,7 +239,7 @@ const CareerPlanningContent = () => {
                 </TabsTrigger>
                 <TabsTrigger value="partner" className="flex items-center gap-2 data-[state=active]:bg-[#B3EBEF] data-[state=active]:text-gray-800 text-gray-700 font-medium relative">
                   <Users className="w-4 h-4" />
-                  <span>未来伴侣</span>
+                  <span>伴侣</span>
                   {partnerSaved && (
                     <Badge
                       variant="secondary"
