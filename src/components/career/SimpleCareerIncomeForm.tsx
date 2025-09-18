@@ -143,7 +143,7 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
         );
         
         if (applicableFluctuation) {
-          const yearsInPeriod = year - applicableFluctuation.startYear;
+          const yearsInPeriod = year - applicableFluctuation.startYear + 1;
           income = data.currentIncome * Math.pow(1 + applicableFluctuation.growthRate / 100, yearsInPeriod);
           growthRate = applicableFluctuation.growthRate;
         } else {
