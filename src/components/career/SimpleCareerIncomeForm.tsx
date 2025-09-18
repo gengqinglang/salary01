@@ -145,9 +145,10 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
           // 找到当前年份适用的波动区间
           const applicableFluctuation = fluctuations.find(f => year >= f.startYear && year <= f.endYear);
           if (applicableFluctuation) {
-            const yearsInPeriod = Math.max(0, year - applicableFluctuation.startYear);
+            // 使用固定增长率，不是复合增长
+            // 在整个年龄区间内，每年都基于原始收入应用同样的增长率
             const rate = (applicableFluctuation.growthRate ?? 0) / 100;
-            income = baseIncome * Math.pow(1 + rate, yearsInPeriod);
+            income = baseIncome * (1 + rate);
             growthRate = applicableFluctuation.growthRate ?? 0;
           } else {
             income = baseIncome;
