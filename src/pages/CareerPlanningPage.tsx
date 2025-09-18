@@ -246,7 +246,7 @@ const CareerPlanningContent = () => {
           </div>
           
           {/* 调试模块：详细计算过程展示 */}
-          <div className="mt-4 mx-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <div className="hidden mt-4 mx-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <h3 className="text-sm font-bold text-gray-800 mb-3">🔍 本人工资收入计算过程（调试用）</h3>
             <div className="space-y-3 text-xs text-gray-700">
               
