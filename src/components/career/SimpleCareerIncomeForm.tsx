@@ -509,12 +509,13 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
         </Card>
       )}
 
-      {/* 收入预测表 - 只在未退休状态下显示 */}
+      {/* 收入预测表 - 只在未退休状态下显示，且不是收入波动模式 */}
       {(data.currentStatus || 'not-retired') === 'not-retired' && 
        typeof data.currentIncome === 'number' && 
        Number.isFinite(data.currentIncome) && 
        data.currentIncome > 0 && 
-       data.retirementAge > data.currentAge && (
+       data.retirementAge > data.currentAge &&
+       data.incomeChange !== 'fluctuation' && (
         <Card className="bg-[#CAF4F7]/20">
           <CardContent className="p-0">
             <div>
