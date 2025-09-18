@@ -217,9 +217,9 @@ const CareerPlanningContent = () => {
                 personalTotalIncome={personalTotalIncome}
                 partnerTotalIncome={partnerTotalIncome}
                 combinedTotalIncome={combinedTotalIncome}
-                personalProgressiveIncome={personalFormProgressiveIncome || personalProgressiveIncome}
-                partnerProgressiveIncome={partnerFormProgressiveIncome || partnerProgressiveIncome}
-                combinedProgressiveIncome={(personalFormProgressiveIncome || personalProgressiveIncome) + (partnerFormProgressiveIncome || partnerProgressiveIncome)}
+                personalProgressiveIncome={computeProgressiveIncomeFromForm(personalData)}
+                partnerProgressiveIncome={computeProgressiveIncomeFromForm(partnerData)}
+                combinedProgressiveIncome={computeProgressiveIncomeFromForm(personalData) + computeProgressiveIncomeFromForm(partnerData)}
                 personalCompleteness={personalCompleteness}
                 partnerCompleteness={partnerCompleteness}
                 formatToWan={formatToWan}
