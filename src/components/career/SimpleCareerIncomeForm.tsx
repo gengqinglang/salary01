@@ -320,7 +320,7 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                 onChange={(e) => {
                   const value = e.target.value;
                   if (value === '') {
-                    handleDataChange('currentIncome', undefined);
+                    handleDataChange('currentIncome', 0);
                   } else {
                     const numValue = parseFloat(value);
                     if (!isNaN(numValue)) {
@@ -544,21 +544,22 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                  id="expectedRetirementSalary"
                  type="number"
                  step="1"
-                 value={retirementSalaryEdited ? 
-                   (data.expectedRetirementSalary !== undefined ? data.expectedRetirementSalary.toString() : '') :
-                   (data.expectedRetirementSalary !== undefined ? data.expectedRetirementSalary.toString() : Math.round((data.currentIncome || 0) * 10000 / 12 * 0.3).toString())}
-                 onChange={(e) => {
-                   setRetirementSalaryEdited(true);
-                   const value = e.target.value;
-                   if (value === '') {
-                     handleDataChange('expectedRetirementSalary', undefined);
-                   } else {
-                     const numValue = parseFloat(value);
-                     if (!isNaN(numValue)) {
-                       handleDataChange('expectedRetirementSalary', numValue);
-                     }
-                   }
-                 }}
+                  value={retirementSalaryEdited ? 
+                    (data.expectedRetirementSalary !== undefined ? data.expectedRetirementSalary.toString() : '') :
+                    (data.expectedRetirementSalary !== undefined ? data.expectedRetirementSalary.toString() : 
+                      Math.round(Math.max(0, (data.currentIncome || 0)) * 10000 / 12 * 0.3).toString())}
+                  onChange={(e) => {
+                    setRetirementSalaryEdited(true);
+                    const value = e.target.value;
+                    if (value === '') {
+                      handleDataChange('expectedRetirementSalary', 0);
+                    } else {
+                      const numValue = parseFloat(value);
+                      if (!isNaN(numValue)) {
+                        handleDataChange('expectedRetirementSalary', numValue);
+                      }
+                    }
+                  }}
                  placeholder="0"
                  className="border-2 border-[#B3EBEF] focus:border-[#B3EBEF] focus:ring-[#B3EBEF]/40"
                />
