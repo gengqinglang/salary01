@@ -44,7 +44,6 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
 }) => {
   const [fluctuations, setFluctuations] = useState<IncomeFluctuation[]>(data.fluctuations || []);
   const [growthRateInputs, setGrowthRateInputs] = useState<Record<string, string>>({});
-  const [showAllYears, setShowAllYears] = useState(true);
   const [retirementSalaryEdited, setRetirementSalaryEdited] = useState(false);
 
   // 同步本地输入态与波动配置
@@ -68,12 +67,6 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
   }, [data.currentAge]);
 
   const handleDataChange = (field: keyof CareerIncomeData, value: any) => {
-    // Reset showAllYears when key inputs change
-    if (field === 'currentIncome' || field === 'retirementAge' || field === 'incomeChange' || 
-        field === 'continuousGrowthRate' || field === 'continuousDeclineRate' || field === 'fluctuations') {
-      setShowAllYears(false);
-    }
-    
     const newData = {
       ...data,
       [field]: value
@@ -573,80 +566,51 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                     <TableHead className="text-center w-1/3">增长率（%）</TableHead>
                   </TableRow>
                 </TableHeader>
-                 <TableBody>
-                   {incomeTable
-                     .slice(0, showAllYears ? undefined : 10)
-                     .map((row) => {
-                       // 检查当前年份是否在波动期内
-                       const isInFluctuationPeriod = data.incomeChange === 'fluctuation' && 
-                         fluctuations.some(f => row.year >= f.startYear && row.year <= f.endYear);
-                       
-                       return (
-                         <TableRow 
-                           key={row.year}
-                           className={
-                             row.isRetired 
-                               ? "bg-gradient-to-r from-blue-50 to-cyan-50 border-l-4 border-blue-400"
-                               : isInFluctuationPeriod 
-                                 ? "bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-400" 
-                                 : ""
-                           }
-                         >
+                  <TableBody>
+                    {incomeTable
+                      .map((row) => {
+                        // 检查当前年份是否在波动期内
+                        const isInFluctuationPeriod = data.incomeChange === 'fluctuation' && 
+                          fluctuations.some(f => row.year >= f.startYear && row.year <= f.endYear);
+                        
+                        return (
+                          <TableRow 
+                            key={row.year}
+                            className={
+                              row.isRetired 
+                                ? "bg-gradient-to-r from-blue-50 to-cyan-50 border-l-4 border-blue-400"
+                                : isInFluctuationPeriod 
+                                  ? "bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-400" 
+                                  : ""
+                            }
+                          >
+                             <TableCell className={`text-center ${row.isRetired ? 'font-medium text-blue-800' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
+                               {row.year}岁
+                               {row.isRetired && (
+                                 <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-blue-100 text-blue-800 border border-blue-200">
+                                   退休收入
+                                 </span>
+                               )}
+                               {!row.isRetired && isInFluctuationPeriod && (
+                                 <span className={`ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs border ${
+                                   row.growthRate > 0 
+                                     ? 'bg-green-100 text-green-800 border-green-200' 
+                                     : 'bg-red-100 text-red-800 border-red-200'
+                                 }`}>
+                                   {row.growthRate > 0 ? '收入上升' : '收入下降'}
+                                 </span>
+                               )}
+                            </TableCell>
                             <TableCell className={`text-center ${row.isRetired ? 'font-medium text-blue-800' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
-                              {row.year}岁
-                              {row.isRetired && (
-                                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-blue-100 text-blue-800 border border-blue-200">
-                                  退休收入
-                                </span>
-                              )}
-                              {!row.isRetired && isInFluctuationPeriod && (
-                                <span className={`ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs border ${
-                                  row.growthRate > 0 
-                                    ? 'bg-green-100 text-green-800 border-green-200' 
-                                    : 'bg-red-100 text-red-800 border-red-200'
-                                }`}>
-                                  {row.growthRate > 0 ? '收入上升' : '收入下降'}
-                                </span>
-                              )}
-                           </TableCell>
-                           <TableCell className={`text-center ${row.isRetired ? 'font-medium text-blue-800' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
-                             {row.income.toFixed(1)}
-                           </TableCell>
-                           <TableCell className={`text-center ${row.isRetired ? 'font-medium text-blue-800' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
-                             {row.growthRate.toFixed(1)}%
-                           </TableCell>
-                         </TableRow>
-                       );
-                     })}
-                   {!showAllYears && incomeTable.length > 10 && (
-                     <TableRow>
-                       <TableCell colSpan={3} className="text-center">
-                         <Button 
-                           variant="ghost" 
-                           onClick={() => setShowAllYears(true)}
-                           className="text-[#01BCD6] hover:text-[#01BCD6] hover:bg-[#CAF4F7]/30"
-                         >
-                           <ChevronDown className="w-4 h-4 mr-1" />
-                           显示全部 {incomeTable.length} 年数据
-                         </Button>
-                       </TableCell>
-                     </TableRow>
-                   )}
-                   {showAllYears && incomeTable.length > 10 && (
-                     <TableRow>
-                       <TableCell colSpan={3} className="text-center">
-                         <Button 
-                           variant="ghost" 
-                           onClick={() => setShowAllYears(false)}
-                           className="text-[#01BCD6] hover:text-[#01BCD6] hover:bg-[#CAF4F7]/30"
-                         >
-                           <ChevronUp className="w-4 h-4 mr-1" />
-                           收起显示
-                         </Button>
-                       </TableCell>
-                     </TableRow>
-                   )}
-                 </TableBody>
+                              {row.income.toFixed(1)}
+                            </TableCell>
+                            <TableCell className={`text-center ${row.isRetired ? 'font-medium text-blue-800' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
+                              {row.growthRate.toFixed(1)}%
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                  </TableBody>
               </Table>
              </div>
            </CardContent>
