@@ -20,9 +20,7 @@ interface CareerIncomeData {
   currentAge: number;
   currentIncome: number; // 万元/年
   retirementAge: number;
-  incomeChange: 'continuous-growth' | 'stable' | 'fluctuation' | 'continuous-decline';
-  continuousGrowthRate?: number; // 持续增长率，百分比
-  continuousDeclineRate?: number; // 持续下降率，百分比
+  incomeChange: 'stable' | 'fluctuation';
   fluctuations: IncomeFluctuation[];
   currentStatus?: 'retired' | 'not-retired'; // 当前状态
   retirementIncome?: number; // 退休金（元/月）
@@ -140,24 +138,14 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
         let income = baseIncome;
         let growthRate: number = 0;
 
-        if (data.incomeChange === 'continuous-growth') {
-          const customGrowthRate = ((data.continuousGrowthRate ?? 1) / 100);
-          const factor = 1 + (Number.isFinite(customGrowthRate) ? customGrowthRate : 0);
-          income = baseIncome * Math.pow(factor, i);
-          growthRate = data.continuousGrowthRate ?? 1;
-        } else if (data.incomeChange === 'continuous-decline') {
-          const customDeclineRate = ((data.continuousDeclineRate ?? 1) / 100);
-          const factor = Math.max(0, 1 - (Number.isFinite(customDeclineRate) ? customDeclineRate : 0));
-          income = baseIncome * Math.pow(factor, i);
-          growthRate = -(data.continuousDeclineRate ?? 1);
-        } else if (data.incomeChange === 'stable') {
+        if (data.incomeChange === 'stable') {
           income = baseIncome;
           growthRate = 0;
         } else if (data.incomeChange === 'fluctuation') {
           // 找到当前年份适用的波动区间
           const applicableFluctuation = fluctuations.find(f => year >= f.startYear && year <= f.endYear);
           if (applicableFluctuation) {
-            const yearsInPeriod = Math.max(0, year - applicableFluctuation.startYear + 1);
+            const yearsInPeriod = Math.max(0, year - applicableFluctuation.startYear);
             const rate = (applicableFluctuation.growthRate ?? 0) / 100;
             income = baseIncome * Math.pow(1 + rate, yearsInPeriod);
             growthRate = applicableFluctuation.growthRate ?? 0;
@@ -369,73 +357,11 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                 <Label htmlFor="stable" className="cursor-pointer">保持不变</Label>
               </div>
               <div className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[#CAF4F7]/20 transition-colors">
-                <RadioGroupItem value="continuous-growth" id="continuous-growth" className="border-2 border-[#B3EBEF] data-[state=checked]:border-[#01BCD6] data-[state=checked]:text-[#01BCD6]" />
-                <Label htmlFor="continuous-growth" className="cursor-pointer">持续增长</Label>
-              </div>
-              <div className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[#CAF4F7]/20 transition-colors">
-                <RadioGroupItem value="continuous-decline" id="continuous-decline" className="border-2 border-[#B3EBEF] data-[state=checked]:border-[#01BCD6] data-[state=checked]:text-[#01BCD6]" />
-                <Label htmlFor="continuous-decline" className="cursor-pointer">持续下降</Label>
-              </div>
-              <div className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[#CAF4F7]/20 transition-colors">
                 <RadioGroupItem value="fluctuation" id="fluctuation" className="border-2 border-[#B3EBEF] data-[state=checked]:border-[#01BCD6] data-[state=checked]:text-[#01BCD6]" />
                 <Label htmlFor="fluctuation" className="cursor-pointer">收入波动</Label>
               </div>
             </RadioGroup>
           </div>
-
-          {/* 持续增长率配置 */}
-          {data.incomeChange === 'continuous-growth' && (
-            <div className="space-y-2">
-              <Label htmlFor="growthRate" className="text-gray-700 font-medium">预计年增长率（%）</Label>
-               <Input
-                 id="growthRate"
-                 type="number"
-                 step="0.1"
-                 min="0"
-                 value={data.continuousGrowthRate ?? ''}
-                 onChange={(e) => {
-                   const value = e.target.value;
-                   if (value === '') {
-                     handleDataChange('continuousGrowthRate', undefined);
-                   } else {
-                     const numValue = parseFloat(value);
-                     if (!isNaN(numValue) && numValue >= 0) {
-                       handleDataChange('continuousGrowthRate', numValue);
-                     }
-                   }
-                 }}
-                 placeholder="请输入正数，如：5"
-                 className="border-2 border-[#B3EBEF] focus:border-[#B3EBEF] focus:ring-[#B3EBEF]/40 w-full"
-               />
-            </div>
-          )}
-
-          {/* 持续下降率配置 */}
-          {data.incomeChange === 'continuous-decline' && (
-            <div className="space-y-2">
-              <Label htmlFor="declineRate" className="text-gray-700 font-medium">预计年下降率（%）</Label>
-               <Input
-                 id="declineRate"
-                 type="number"
-                 step="0.1"
-                 min="0"
-                 value={data.continuousDeclineRate ?? ''}
-                 onChange={(e) => {
-                   const value = e.target.value;
-                   if (value === '') {
-                     handleDataChange('continuousDeclineRate', undefined);
-                   } else {
-                     const numValue = parseFloat(value);
-                     if (!isNaN(numValue) && numValue >= 0) {
-                       handleDataChange('continuousDeclineRate', numValue);
-                     }
-                   }
-                 }}
-                 placeholder="请输入正数，如：3"
-                 className="border-2 border-[#B3EBEF] focus:border-[#B3EBEF] focus:ring-[#B3EBEF]/40 w-full"
-               />
-            </div>
-          )}
 
            {/* 收入波动配置 */}
            {data.incomeChange === 'fluctuation' && (

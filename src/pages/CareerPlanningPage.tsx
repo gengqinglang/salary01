@@ -13,9 +13,7 @@ interface CareerIncomeData {
   currentAge: number;
   currentIncome: number;
   retirementAge: number;
-  incomeChange: 'continuous-growth' | 'stable' | 'fluctuation' | 'continuous-decline';
-  continuousGrowthRate?: number;
-  continuousDeclineRate?: number;
+  incomeChange: 'stable' | 'fluctuation';
   fluctuations: Array<{
     id: string;
     startYear: number;
@@ -62,8 +60,6 @@ const CareerPlanningContent = () => {
     currentIncome: 0,
     retirementAge: 60,
     incomeChange: 'stable',
-    continuousGrowthRate: 1,
-    continuousDeclineRate: 1,
     fluctuations: []
   });
 
@@ -73,8 +69,6 @@ const CareerPlanningContent = () => {
     currentIncome: 0,
     retirementAge: 60,
     incomeChange: 'stable',
-    continuousGrowthRate: 1,
-    continuousDeclineRate: 1,
     fluctuations: []
   });
 
@@ -112,14 +106,7 @@ const CareerPlanningContent = () => {
       const year = currentAge + i;
       let incomeWan = currentIncomeWan;
 
-      if (d.incomeChange === 'continuous-growth') {
-        const rate = ((d.continuousGrowthRate ?? 1) / 100);
-        incomeWan = currentIncomeWan * Math.pow(1 + (Number.isFinite(rate) ? rate : 0), i);
-      } else if (d.incomeChange === 'continuous-decline') {
-        const rate = ((d.continuousDeclineRate ?? 1) / 100);
-        const factor = Math.max(0, 1 - (Number.isFinite(rate) ? rate : 0));
-        incomeWan = currentIncomeWan * Math.pow(factor, i);
-      } else if (d.incomeChange === 'fluctuation') {
+      if (d.incomeChange === 'fluctuation') {
         const f = d.fluctuations?.find(f => year >= f.startYear && year <= f.endYear);
         if (f) {
           const yearsInPeriod = Math.max(0, year - f.startYear);
@@ -270,9 +257,7 @@ const CareerPlanningContent = () => {
                 <div>退休年龄：{personalData.retirementAge}岁</div>
                 <div>预计退休工资：{personalData.expectedRetirementSalary || '未设置'}元/月</div>
                 <div>收入变化：{
-                  personalData.incomeChange === 'continuous-growth' ? '持续增长' :
                   personalData.incomeChange === 'stable' ? '保持不变' :
-                  personalData.incomeChange === 'continuous-decline' ? '持续下降' :
                   personalData.incomeChange === 'fluctuation' ? '收入波动' : '未知'
                 }</div>
                 <div>保存状态：{personalSaved ? '已保存' : '未保存'}</div>
@@ -290,13 +275,7 @@ const CareerPlanningContent = () => {
                     const currentYear = personalData.currentAge + i;
                     let yearlyIncome = personalData.currentIncome;
                     
-                    if (personalData.incomeChange === 'continuous-growth') {
-                      const rate = (personalData.continuousGrowthRate || 1) / 100;
-                      yearlyIncome = personalData.currentIncome * Math.pow(1 + rate, i);
-                    } else if (personalData.incomeChange === 'continuous-decline') {
-                      const rate = (personalData.continuousDeclineRate || 1) / 100;
-                      yearlyIncome = personalData.currentIncome * Math.pow(1 - rate, i);
-                    } else if (personalData.incomeChange === 'fluctuation') {
+                    if (personalData.incomeChange === 'fluctuation') {
                       const f = personalData.fluctuations.find(f => currentYear >= f.startYear && currentYear <= f.endYear);
                       if (f) {
                         const yearsInPeriod = currentYear - f.startYear;
@@ -395,13 +374,7 @@ const CareerPlanningContent = () => {
                     const currentYear = personalData.currentAge + i;
                     let yearlyIncome = personalData.currentIncome;
                     
-                    if (personalData.incomeChange === 'continuous-growth') {
-                      const rate = (personalData.continuousGrowthRate || 1) / 100;
-                      yearlyIncome = personalData.currentIncome * Math.pow(1 + rate, i);
-                    } else if (personalData.incomeChange === 'continuous-decline') {
-                      const rate = (personalData.continuousDeclineRate || 1) / 100;
-                      yearlyIncome = personalData.currentIncome * Math.pow(1 - rate, i);
-                    } else if (personalData.incomeChange === 'fluctuation') {
+                    if (personalData.incomeChange === 'fluctuation') {
                       const f = personalData.fluctuations.find(f => currentYear >= f.startYear && currentYear <= f.endYear);
                       if (f) {
                         const yearsInPeriod = currentYear - f.startYear;
