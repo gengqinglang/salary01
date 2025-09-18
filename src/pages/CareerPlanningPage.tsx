@@ -224,8 +224,8 @@ const CareerPlanningContent = () => {
           
           <div className="relative py-6 text-center flex flex-col justify-center" style={{ minHeight: '80px' }}>
             <div className="flex items-center justify-center mb-2">
-              <h1 className="text-lg font-bold text-gray-900 tracking-tight">
-                工资收入
+              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+                工资收入计算器
               </h1>
             </div>
             
