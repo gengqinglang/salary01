@@ -578,7 +578,7 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                             key={row.year}
                             className={
                               row.isRetired 
-                                ? "bg-gradient-to-r from-blue-50 to-cyan-50 border-l-4 border-blue-400"
+                                ? "bg-blue-50 border-l-4 border-blue-400"
                                 : isInFluctuationPeriod 
                                   ? "bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-400" 
                                   : ""
@@ -587,7 +587,7 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                              <TableCell className={`text-center ${row.isRetired ? 'font-medium text-blue-800' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
                                {row.year}岁
                                {row.isRetired && (
-                                 <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-blue-100 text-blue-800 border border-blue-200">
+                                 <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-[#CAF4F7]/60 text-[#01BCD6] border border-[#CAF4F7]">
                                    退休收入
                                  </span>
                                )}
