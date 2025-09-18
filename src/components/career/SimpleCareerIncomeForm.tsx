@@ -578,7 +578,7 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                             key={row.year}
                             className={
                               row.isRetired 
-                                ? `${row.year < 85 ? 'border-l-4 border-gray-400/80' : ''}`
+                                ? `${row.year < 85 ? 'border-l-4 border-[#B3EBEF]' : ''}`
                                 : isInFluctuationPeriod 
                                   ? "bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-400" 
                                   : ""
