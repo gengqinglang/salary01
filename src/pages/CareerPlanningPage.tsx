@@ -107,9 +107,10 @@ const CareerPlanningContent = () => {
     }
     
     // 计算退休后收入（从退休年龄到85岁）
-    if (d.expectedRetirementSalary && d.expectedRetirementSalary > 0) {
+    const retirementSalary = Number(d.expectedRetirementSalary) || 0;
+    if (retirementSalary > 0) {
       const retirementYears = 85 - d.retirementAge + 1; // 从退休年龄到85岁（包含退休当年）
-      const annualRetirementIncome = d.expectedRetirementSalary * 12; // 月薪转年薪（元）
+      const annualRetirementIncome = retirementSalary * 12; // 月薪转年薪（元）
       totalWan += (annualRetirementIncome / 10000) * retirementYears; // 转换为万元
     }
     
@@ -289,12 +290,13 @@ const CareerPlanningContent = () => {
               <div className="bg-white p-3 rounded border">
                 <div className="font-semibold mb-2">退休后收入计算（{personalData.retirementAge}岁 到 85岁）：</div>
                 {(() => {
-                  if (!personalData.expectedRetirementSalary || personalData.expectedRetirementSalary <= 0) {
+                  const retirementSalary = Number(personalData.expectedRetirementSalary) || 0;
+                  if (retirementSalary <= 0) {
                     return <div className="text-gray-500">未设置退休工资，退休后收入为0</div>;
                   }
                   
                   const retirementYears = 85 - personalData.retirementAge + 1;
-                  const monthlyRetirement = personalData.expectedRetirementSalary;
+                  const monthlyRetirement = retirementSalary;
                   const annualRetirement = monthlyRetirement * 12;
                   const totalRetirementIncome = (annualRetirement / 10000) * retirementYears;
                   
@@ -340,9 +342,10 @@ const CareerPlanningContent = () => {
                   
                   // 计算退休后收入
                   let postRetirementTotal = 0;
-                  if (personalData.expectedRetirementSalary && personalData.expectedRetirementSalary > 0) {
+                  const retirementSalary = Number(personalData.expectedRetirementSalary) || 0;
+                  if (retirementSalary > 0) {
                     const retirementYears = 85 - personalData.retirementAge + 1;
-                    const annualRetirementIncome = personalData.expectedRetirementSalary * 12;
+                    const annualRetirementIncome = retirementSalary * 12;
                     postRetirementTotal = (annualRetirementIncome / 10000) * retirementYears;
                   }
                   
