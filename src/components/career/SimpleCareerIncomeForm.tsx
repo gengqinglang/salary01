@@ -168,9 +168,14 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
     }
     
     // 计算退休后收入（从退休年龄到85岁）
-    if (data.expectedRetirementSalary && data.expectedRetirementSalary > 0) {
+    // 如果没有设置退休工资，使用默认值：当前收入的30%
+    const retirementSalary = data.expectedRetirementSalary !== undefined 
+      ? data.expectedRetirementSalary 
+      : (data.currentIncome || 0) * 10000 / 12 * 0.3;
+      
+    if (retirementSalary > 0) {
       for (let i = data.retirementAge; i <= 85; i++) {
-        const annualRetirementIncome = (data.expectedRetirementSalary * 12) / 10000; // 转换为万元
+        const annualRetirementIncome = (retirementSalary * 12) / 10000; // 转换为万元
         table.push({
           year: i,
           income: Math.round(annualRetirementIncome * 100) / 100,
