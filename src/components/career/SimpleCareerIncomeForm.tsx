@@ -570,7 +570,7 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
       </Card>
 
       {/* 工资收入速算表 - 必输项目未完成时显示空表 */}
-      {(data.currentStatus || 'not-retired') === 'not-retired' && !isFormValid() && data.incomeChange !== 'fluctuation' && (
+      {(data.currentStatus || 'not-retired') === 'not-retired' && !isFormValid() && (
         <Card className="bg-[#CAF4F7]/20">
           <CardHeader className="pb-4">
             <CardTitle className="text-center text-gray-700">工资收入速算表</CardTitle>
@@ -588,8 +588,7 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
        typeof data.currentIncome === 'number' && 
        Number.isFinite(data.currentIncome) && 
        data.currentIncome > 0 && 
-       data.retirementAge > data.currentAge && 
-       data.incomeChange !== 'fluctuation' && (
+       data.retirementAge > data.currentAge && (
         <Card className="bg-[#CAF4F7]/20">
           <CardContent className="p-0">
             <div>
