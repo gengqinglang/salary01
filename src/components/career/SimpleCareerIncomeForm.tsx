@@ -206,7 +206,7 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                               formData.currentIncome > 0;
     return validCurrentIncome && 
            formData.retirementAge > formData.currentAge &&
-           (formData.incomeChange !== 'fluctuation' || fluctuations.length > 0);
+           (formData.incomeChange !== 'fluctuation' || (formData.fluctuations && formData.fluctuations.length > 0));
   };
 
 
