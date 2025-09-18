@@ -584,10 +584,10 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                                   : ""
                             }
                           >
-                             <TableCell className={`text-center ${row.isRetired ? 'font-medium text-black' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
+                             <TableCell className={`text-center ${row.isRetired ? 'text-black' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
                                {row.year}岁
                                {row.isRetired && (
-                                 <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-[#CAF4F7]/60 text-[#01BCD6] border border-[#CAF4F7]">
+                                 <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-700 border border-gray-200">
                                    退休收入
                                  </span>
                                )}
@@ -601,10 +601,10 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                                  </span>
                                )}
                             </TableCell>
-                            <TableCell className={`text-center ${row.isRetired ? 'font-medium text-black' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
+                            <TableCell className={`text-center ${row.isRetired ? 'text-black' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
                               {row.income.toFixed(1)}
                             </TableCell>
-                            <TableCell className={`text-center ${row.isRetired ? 'font-medium text-black' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
+                            <TableCell className={`text-center ${row.isRetired ? 'text-black' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
                               {row.growthRate.toFixed(1)}%
                             </TableCell>
                           </TableRow>
