@@ -61,7 +61,7 @@ const CareerPlanningContent = () => {
     currentAge: 30,
     currentIncome: 0,
     retirementAge: 60,
-    incomeChange: 'continuous-growth',
+    incomeChange: 'stable',
     continuousGrowthRate: 1,
     continuousDeclineRate: 1,
     fluctuations: []
@@ -72,7 +72,7 @@ const CareerPlanningContent = () => {
     currentAge: 30,
     currentIncome: 0,
     retirementAge: 60,
-    incomeChange: 'continuous-growth',
+    incomeChange: 'stable',
     continuousGrowthRate: 1,
     continuousDeclineRate: 1,
     fluctuations: []
