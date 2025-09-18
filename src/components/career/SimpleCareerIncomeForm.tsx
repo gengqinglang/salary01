@@ -336,17 +336,17 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
           <div className="space-y-3 relative z-10">
             <Label className="text-gray-700 font-medium">预计未来收入变化</Label>
             <RadioGroup
-              value={data.incomeChange}
+              value={data.incomeChange || 'stable'}
               onValueChange={(value) => handleDataChange('incomeChange', value)}
               className="mt-1 grid grid-cols-2 gap-2"
             >
               <div className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[#CAF4F7]/20 transition-colors">
-                <RadioGroupItem value="continuous-growth" id="continuous-growth" className="border-2 border-[#B3EBEF] data-[state=checked]:border-[#01BCD6] data-[state=checked]:text-[#01BCD6]" />
-                <Label htmlFor="continuous-growth" className="cursor-pointer">持续增长</Label>
-              </div>
-              <div className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[#CAF4F7]/20 transition-colors">
                 <RadioGroupItem value="stable" id="stable" className="border-2 border-[#B3EBEF] data-[state=checked]:border-[#01BCD6] data-[state=checked]:text-[#01BCD6]" />
                 <Label htmlFor="stable" className="cursor-pointer">保持不变</Label>
+              </div>
+              <div className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[#CAF4F7]/20 transition-colors">
+                <RadioGroupItem value="continuous-growth" id="continuous-growth" className="border-2 border-[#B3EBEF] data-[state=checked]:border-[#01BCD6] data-[state=checked]:text-[#01BCD6]" />
+                <Label htmlFor="continuous-growth" className="cursor-pointer">持续增长</Label>
               </div>
               <div className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[#CAF4F7]/20 transition-colors">
                 <RadioGroupItem value="continuous-decline" id="continuous-decline" className="border-2 border-[#B3EBEF] data-[state=checked]:border-[#01BCD6] data-[state=checked]:text-[#01BCD6]" />
