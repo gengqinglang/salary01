@@ -309,7 +309,10 @@ const CareerPlanningContent = () => {
               <div className="bg-green-50 p-3 rounded border border-green-200">
                 <div className="font-semibold mb-2 text-green-800">退休后工资计算过程（{personalData.retirementAge}岁 到 85岁）：</div>
                 {(() => {
-                  const retirementSalary = Number(personalData.expectedRetirementSalary) || 0;
+                  // 如果没有设置退休工资，使用默认值：当前收入的30%
+                  const retirementSalary = personalData.expectedRetirementSalary !== undefined 
+                    ? Number(personalData.expectedRetirementSalary) 
+                    : personalData.currentIncome * 10000 / 12 * 0.3;
                   
                   if (retirementSalary <= 0) {
                     return (
