@@ -318,11 +318,16 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                   <SelectValue placeholder="请选择退休年龄" />
                 </SelectTrigger>
                 <SelectContent className="max-h-60 overflow-y-auto">
-                  {Array.from({ length: 56 }, (_, i) => i + 30).map((age) => (
-                    <SelectItem key={age} value={age.toString()}>
-                      {age}岁
-                    </SelectItem>
-                  ))}
+                  {(() => {
+                    const minAge = Math.max(data.currentAge || 30, 50);
+                    const maxAge = 85;
+                    const ageCount = maxAge - minAge + 1;
+                    return Array.from({ length: ageCount }, (_, i) => i + minAge).map((age) => (
+                      <SelectItem key={age} value={age.toString()}>
+                        {age}岁
+                      </SelectItem>
+                    ));
+                  })()}
                 </SelectContent>
               </Select>
             </div>
