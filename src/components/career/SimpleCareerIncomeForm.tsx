@@ -66,6 +66,13 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
     }
   }, [data.currentAge]);
 
+  // 设置收入变化默认值
+  useEffect(() => {
+    if (!data.incomeChange) {
+      handleDataChange('incomeChange', 'stable');
+    }
+  }, []);
+
   const handleDataChange = (field: keyof CareerIncomeData, value: any) => {
     const newData = {
       ...data,
