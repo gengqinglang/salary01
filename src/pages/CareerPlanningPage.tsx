@@ -223,10 +223,71 @@ const CareerPlanningContent = () => {
             </div>
           </div>
           
-          {/* 调试模块：本人工资收入计算过程 */}
+          {/* 调试模块：显示与Header区域一致的数据源 */}
           <div className="mt-4 mx-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <h3 className="text-sm font-bold text-gray-800 mb-3">🔍 本人工资收入计算过程（调试用）</h3>
             <div className="space-y-3 text-xs text-gray-700">
+              
+              {/* Header数据源对比 */}
+              <div className="bg-green-50 p-3 rounded border border-green-200">
+                <div className="font-semibold mb-2 text-green-800">Header区域使用的数据源：</div>
+                {(() => {
+                  // 使用与Header完全相同的逻辑
+                  const headerPersonalIncome = personalTotalIncome > 0 ? personalTotalIncome : (personalFormProgressiveIncome || personalProgressiveIncome);
+                  const isUsingTotalIncome = personalTotalIncome > 0;
+                  const isUsingFormProgressive = !isUsingTotalIncome && personalFormProgressiveIncome > 0;
+                  const isUsingContextProgressive = !isUsingTotalIncome && !isUsingFormProgressive && personalProgressiveIncome > 0;
+                  
+                  return (
+                    <div className="text-green-800">
+                      <div>personalTotalIncome: {personalTotalIncome}万元</div>
+                      <div>personalFormProgressiveIncome: {personalFormProgressiveIncome / 10000}万元</div>
+                      <div>personalProgressiveIncome: {personalProgressiveIncome}万元</div>
+                      <div className="font-bold border-t pt-2 mt-2">
+                        Header显示值: {formatToWan(headerPersonalIncome)}万元
+                      </div>
+                      <div className="text-sm">
+                        数据来源: {
+                          isUsingTotalIncome ? 'personalTotalIncome (Context完整计算)' :
+                          isUsingFormProgressive ? 'personalFormProgressiveIncome (本地表单计算)' :
+                          isUsingContextProgressive ? 'personalProgressiveIncome (Context预估计算)' :
+                          '无数据'
+                        }
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* 本地计算函数对比 */}
+              <div className="bg-blue-50 p-3 rounded border border-blue-200">
+                <div className="font-semibold mb-2 text-blue-800">本地计算函数结果：</div>
+                {(() => {
+                  const localResult = computeProgressiveIncomeFromForm(personalData);
+                  const localResultWan = localResult / 10000;
+                  const headerPersonalIncome = personalTotalIncome > 0 ? personalTotalIncome : (personalFormProgressiveIncome || personalProgressiveIncome);
+                  const headerPersonalIncomeWan = headerPersonalIncome;
+                  const formProgressiveWan = personalFormProgressiveIncome / 10000;
+                  
+                  return (
+                    <div className="text-blue-800">
+                      <div>本地函数计算: {localResultWan.toFixed(1)}万元</div>
+                      <div>Header显示值: {headerPersonalIncomeWan.toFixed(1)}万元</div>
+                      <div>表单保存值: {formProgressiveWan.toFixed(1)}万元</div>
+                      <div className="font-bold border-t pt-2 mt-2">
+                        差异分析: 
+                      </div>
+                      <div className="text-sm">
+                        本地计算 vs Header: {Math.abs(localResultWan - headerPersonalIncomeWan).toFixed(1)}万元
+                      </div>
+                      <div className="text-sm">
+                        本地计算 vs 表单保存: {Math.abs(localResultWan - formProgressiveWan).toFixed(1)}万元
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+
               {/* 基本信息 */}
               <div className="bg-white p-3 rounded border">
                 <div className="font-semibold mb-2">基本信息：</div>
@@ -240,121 +301,19 @@ const CareerPlanningContent = () => {
                   personalData.incomeChange === 'continuous-decline' ? '持续下降' :
                   personalData.incomeChange === 'fluctuation' ? '收入波动' : '未知'
                 }</div>
+                <div>保存状态：{personalSaved ? '已保存' : '未保存'}</div>
               </div>
 
-              {/* 退休前收入计算 */}
+              {/* 详细计算过程 */}
               <div className="bg-white p-3 rounded border">
-                <div className="font-semibold mb-2">退休前收入计算（{personalData.currentAge}岁 到 {personalData.retirementAge-1}岁）：</div>
+                <div className="font-semibold mb-2">详细计算过程：</div>
                 {(() => {
-                  const years = personalData.retirementAge - personalData.currentAge;
-                  let preRetirementTotal = 0;
-                  const yearlyDetails = [];
-                  
-                  for (let i = 0; i < years; i++) {
-                    const year = personalData.currentAge + i;
-                    let income = personalData.currentIncome;
-                    
-                    if (personalData.incomeChange === 'continuous-growth') {
-                      const rate = (personalData.continuousGrowthRate || 1) / 100;
-                      income = personalData.currentIncome * Math.pow(1 + rate, i);
-                    } else if (personalData.incomeChange === 'continuous-decline') {
-                      const rate = (personalData.continuousDeclineRate || 1) / 100;
-                      income = personalData.currentIncome * Math.pow(1 - rate, i);
-                    } else if (personalData.incomeChange === 'fluctuation') {
-                      const f = personalData.fluctuations.find(f => year >= f.startYear && year <= f.endYear);
-                      if (f) {
-                        const yearsInPeriod = year - f.startYear;
-                        income = personalData.currentIncome * Math.pow(1 + f.growthRate / 100, yearsInPeriod);
-                      }
-                    }
-                    
-                    preRetirementTotal += income;
-                    if (i < 3 || i >= years - 3) { // 只显示前3年和后3年
-                      yearlyDetails.push(`${year}岁: ${income.toFixed(1)}万元`);
-                    } else if (i === 3) {
-                      yearlyDetails.push('...');
-                    }
-                  }
+                  const localResult = computeProgressiveIncomeFromForm(personalData);
+                  const localResultWan = localResult / 10000;
                   
                   return (
                     <div>
-                      <div>工作年数：{years}年</div>
-                      <div>年度收入详情：{yearlyDetails.join(', ')}</div>
-                      <div className="font-bold">退休前总收入：{preRetirementTotal.toFixed(1)}万元</div>
-                    </div>
-                  );
-                })()}
-              </div>
-
-              {/* 退休后收入计算 */}
-              <div className="bg-white p-3 rounded border">
-                <div className="font-semibold mb-2">退休后收入计算（{personalData.retirementAge}岁 到 85岁）：</div>
-                {(() => {
-                  const retirementSalary = Number(personalData.expectedRetirementSalary) || 0;
-                  if (retirementSalary <= 0) {
-                    return <div className="text-gray-500">未设置退休工资，退休后收入为0</div>;
-                  }
-                  
-                  const retirementYears = 85 - personalData.retirementAge + 1;
-                  const monthlyRetirement = retirementSalary;
-                  const annualRetirement = monthlyRetirement * 12;
-                  const totalRetirementIncome = (annualRetirement / 10000) * retirementYears;
-                  
-                  return (
-                    <div>
-                      <div>退休年数：{retirementYears}年</div>
-                      <div>月退休工资：{monthlyRetirement}元</div>
-                      <div>年退休收入：{monthlyRetirement} × 12 = {annualRetirement.toLocaleString()}元 = {(annualRetirement/10000).toFixed(1)}万元</div>
-                      <div className="font-bold">退休后总收入：{(annualRetirement/10000).toFixed(1)} × {retirementYears} = {totalRetirementIncome.toFixed(1)}万元</div>
-                    </div>
-                  );
-                })()}
-              </div>
-
-              {/* 总收入汇总 */}
-              <div className="bg-blue-50 p-3 rounded border border-blue-200">
-                <div className="font-semibold mb-2 text-blue-800">总收入汇总：</div>
-                {(() => {
-                  const computed = computeProgressiveIncomeFromForm(personalData);
-                  const years = personalData.retirementAge - personalData.currentAge;
-                  let preRetirementTotal = 0;
-                  
-                  // 重新计算退休前收入
-                  for (let i = 0; i < years; i++) {
-                    const year = personalData.currentAge + i;
-                    let income = personalData.currentIncome;
-                    
-                    if (personalData.incomeChange === 'continuous-growth') {
-                      const rate = (personalData.continuousGrowthRate || 1) / 100;
-                      income = personalData.currentIncome * Math.pow(1 + rate, i);
-                    } else if (personalData.incomeChange === 'continuous-decline') {
-                      const rate = (personalData.continuousDeclineRate || 1) / 100;
-                      income = personalData.currentIncome * Math.pow(1 - rate, i);
-                    } else if (personalData.incomeChange === 'fluctuation') {
-                      const f = personalData.fluctuations.find(f => year >= f.startYear && year <= f.endYear);
-                      if (f) {
-                        const yearsInPeriod = year - f.startYear;
-                        income = personalData.currentIncome * Math.pow(1 + f.growthRate / 100, yearsInPeriod);
-                      }
-                    }
-                    preRetirementTotal += income;
-                  }
-                  
-                  // 计算退休后收入
-                  let postRetirementTotal = 0;
-                  const retirementSalary = Number(personalData.expectedRetirementSalary) || 0;
-                  if (retirementSalary > 0) {
-                    const retirementYears = 85 - personalData.retirementAge + 1;
-                    const annualRetirementIncome = retirementSalary * 12;
-                    postRetirementTotal = (annualRetirementIncome / 10000) * retirementYears;
-                  }
-                  
-                  return (
-                    <div className="text-blue-800">
-                      <div>退休前收入：{preRetirementTotal.toFixed(1)}万元</div>
-                      <div>退休后收入：{postRetirementTotal.toFixed(1)}万元</div>
-                      <div className="font-bold text-lg">总收入：{(preRetirementTotal + postRetirementTotal).toFixed(1)}万元 = {Math.round((preRetirementTotal + postRetirementTotal) * 10000).toLocaleString()}元</div>
-                      <div className="text-sm">函数返回值：{computed.toLocaleString()}元</div>
+                      <div className="font-bold text-blue-600">本地函数最终结果：{localResultWan.toFixed(1)}万元 = {localResult.toLocaleString()}元</div>
                     </div>
                   );
                 })()}
