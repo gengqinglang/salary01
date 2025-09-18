@@ -574,17 +574,17 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                           fluctuations.some(f => row.year >= f.startYear && row.year <= f.endYear);
                         
                         return (
-                          <TableRow 
+                           <TableRow 
                             key={row.year}
                             className={
                               row.isRetired 
-                                ? "bg-blue-50 border-l-4 border-blue-400"
+                                ? "bg-gray-50 border-l-4 border-gray-400"
                                 : isInFluctuationPeriod 
                                   ? "bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-400" 
                                   : ""
                             }
                           >
-                             <TableCell className={`text-center ${row.isRetired ? 'font-medium text-blue-800' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
+                             <TableCell className={`text-center ${row.isRetired ? 'font-medium text-black' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
                                {row.year}岁
                                {row.isRetired && (
                                  <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-[#CAF4F7]/60 text-[#01BCD6] border border-[#CAF4F7]">
@@ -601,10 +601,10 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                                  </span>
                                )}
                             </TableCell>
-                            <TableCell className={`text-center ${row.isRetired ? 'font-medium text-blue-800' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
+                            <TableCell className={`text-center ${row.isRetired ? 'font-medium text-black' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
                               {row.income.toFixed(1)}
                             </TableCell>
-                            <TableCell className={`text-center ${row.isRetired ? 'font-medium text-blue-800' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
+                            <TableCell className={`text-center ${row.isRetired ? 'font-medium text-black' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
                               {row.growthRate.toFixed(1)}%
                             </TableCell>
                           </TableRow>
