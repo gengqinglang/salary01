@@ -107,7 +107,11 @@ const CareerPlanningContent = () => {
     }
     
     // 计算退休后收入（从退休年龄到85岁）
-    const retirementSalary = Number(d.expectedRetirementSalary) || 0;
+    // 如果没有设置退休工资，使用默认值：当前收入的30%
+    const retirementSalary = d.expectedRetirementSalary !== undefined 
+      ? Number(d.expectedRetirementSalary) 
+      : d.currentIncome * 10000 / 12 * 0.3;
+    
     if (retirementSalary > 0) {
       const retirementYears = 85 - d.retirementAge + 1; // 从退休年龄到85岁（包含退休当年）
       const annualRetirementIncome = retirementSalary * 12; // 月薪转年薪（元）
@@ -376,7 +380,12 @@ const CareerPlanningContent = () => {
                   
                   // 重新计算退休后收入
                   let postRetirementTotal = 0;
-                  const retirementSalary = Number(personalData.expectedRetirementSalary) || 0;
+                  // 如果没有设置退休工资，使用默认值：当前收入的30%
+                  const retirementSalary = personalData.expectedRetirementSalary !== undefined 
+                    ? Number(personalData.expectedRetirementSalary) 
+                    : personalData.currentIncome * 10000 / 12 * 0.3;
+                  const isDefaultRetirementSalary = personalData.expectedRetirementSalary === undefined;
+                  
                   if (retirementSalary > 0) {
                     const retirementYears = 85 - personalData.retirementAge + 1;
                     const annualRetirementIncome = retirementSalary * 12;
@@ -397,6 +406,9 @@ const CareerPlanningContent = () => {
                       <div className="pl-2 mb-2 text-xs bg-white/50 p-2 rounded border">
                         <div>退休前总收入：{preRetirementTotal.toFixed(2)}万元</div>
                         <div>退休后总收入：{postRetirementTotal.toFixed(2)}万元</div>
+                        <div className="text-xs text-gray-600 mt-1">
+                          退休工资：{retirementSalary.toFixed(0)}元/月 {isDefaultRetirementSalary ? '(默认值)' : '(用户设置)'}
+                        </div>
                         <div className="border-t pt-1 mt-1">
                           <div>两者相加：{preRetirementTotal.toFixed(2)} + {postRetirementTotal.toFixed(2)} = {grandTotal.toFixed(2)}万元</div>
                           <div>转换为元：{grandTotal.toFixed(2)}万元 = {grandTotalYuan.toLocaleString()}元</div>
