@@ -123,69 +123,83 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
 
   // 计算收入预测表
   const calculateIncomeTable = () => {
-    const table = [];
-    const years = data.retirementAge - data.currentAge;
-    
-    // 计算退休前收入（不包含退休当年）
-    for (let i = 0; i < years; i++) {
-      const year = data.currentAge + i;
-      let income = data.currentIncome;
-      let growthRate = 0;
+    try {
+      // 基本校验与安全数值
+      const currentAge = Number.isFinite(data.currentAge) ? (data.currentAge as number) : 0;
+      const retirementAge = Number.isFinite(data.retirementAge) ? (data.retirementAge as number) : 0;
+      const baseIncome = typeof data.currentIncome === 'number' && Number.isFinite(data.currentIncome)
+        ? (data.currentIncome as number)
+        : 0;
 
-      if (data.incomeChange === 'continuous-growth') {
-        const customGrowthRate = (data.continuousGrowthRate || 1) / 100; // 使用自定义增长率，默认1%
-        income = data.currentIncome * Math.pow(1 + customGrowthRate, i);
-        growthRate = data.continuousGrowthRate || 1;
-      } else if (data.incomeChange === 'continuous-decline') {
-        const customDeclineRate = (data.continuousDeclineRate || 1) / 100; // 使用自定义下降率，默认1%
-        income = data.currentIncome * Math.pow(1 - customDeclineRate, i);
-        growthRate = -(data.continuousDeclineRate || 1);
-      } else if (data.incomeChange === 'stable') {
-        income = data.currentIncome;
-        growthRate = 0;
-      } else if (data.incomeChange === 'fluctuation') {
-        // 找到当前年份适用的波动区间
-        const applicableFluctuation = fluctuations.find(f => 
-          year >= f.startYear && year <= f.endYear
-        );
-        
-        if (applicableFluctuation) {
-          const yearsInPeriod = year - applicableFluctuation.startYear + 1;
-          income = data.currentIncome * Math.pow(1 + applicableFluctuation.growthRate / 100, yearsInPeriod);
-          growthRate = applicableFluctuation.growthRate;
-        } else {
-          income = data.currentIncome;
+      const years = Math.max(0, retirementAge - currentAge);
+      const table: Array<{ year: number; income: number; growthRate: number; isRetired: boolean } > = [];
+
+      // 退休前收入（不包含退休当年）
+      for (let i = 0; i < years; i++) {
+        const year = currentAge + i;
+        let income = baseIncome;
+        let growthRate: number = 0;
+
+        if (data.incomeChange === 'continuous-growth') {
+          const customGrowthRate = ((data.continuousGrowthRate ?? 1) / 100);
+          const factor = 1 + (Number.isFinite(customGrowthRate) ? customGrowthRate : 0);
+          income = baseIncome * Math.pow(factor, i);
+          growthRate = data.continuousGrowthRate ?? 1;
+        } else if (data.incomeChange === 'continuous-decline') {
+          const customDeclineRate = ((data.continuousDeclineRate ?? 1) / 100);
+          const factor = Math.max(0, 1 - (Number.isFinite(customDeclineRate) ? customDeclineRate : 0));
+          income = baseIncome * Math.pow(factor, i);
+          growthRate = -(data.continuousDeclineRate ?? 1);
+        } else if (data.incomeChange === 'stable') {
+          income = baseIncome;
           growthRate = 0;
+        } else if (data.incomeChange === 'fluctuation') {
+          // 找到当前年份适用的波动区间
+          const applicableFluctuation = fluctuations.find(f => year >= f.startYear && year <= f.endYear);
+          if (applicableFluctuation) {
+            const yearsInPeriod = Math.max(0, year - applicableFluctuation.startYear + 1);
+            const rate = (applicableFluctuation.growthRate ?? 0) / 100;
+            income = baseIncome * Math.pow(1 + rate, yearsInPeriod);
+            growthRate = applicableFluctuation.growthRate ?? 0;
+          } else {
+            income = baseIncome;
+            growthRate = 0;
+          }
+        }
+
+        const safeIncome = Number.isFinite(income) ? income : 0;
+        const safeGrowth = Number.isFinite(growthRate) ? growthRate : 0;
+
+        table.push({
+          year,
+          income: Math.round(safeIncome * 100) / 100,
+          growthRate: safeGrowth,
+          isRetired: false
+        });
+      }
+
+      // 退休后收入（从退休年龄到85岁）
+      const retirementSalaryMonthly = (data.expectedRetirementSalary !== undefined && Number.isFinite(data.expectedRetirementSalary))
+        ? (data.expectedRetirementSalary as number)
+        : Math.round((baseIncome * 10000 / 12) * 0.3);
+
+      if (retirementSalaryMonthly > 0) {
+        for (let i = retirementAge; i <= 85; i++) {
+          const annualRetirementIncome = (retirementSalaryMonthly * 12) / 10000; // 转换为万元
+          table.push({
+            year: i,
+            income: Math.round(((Number.isFinite(annualRetirementIncome) ? annualRetirementIncome : 0) * 100)) / 100,
+            growthRate: 0,
+            isRetired: true
+          });
         }
       }
 
-      table.push({
-        year,
-        income: Math.round(income * 100) / 100,
-        growthRate,
-        isRetired: false
-      });
+      return table;
+    } catch (error) {
+      console.error('calculateIncomeTable error:', error);
+      return [];
     }
-    
-    // 计算退休后收入（从退休年龄到85岁）
-    // 如果没有设置退休工资，使用默认值：当前收入的30%
-    const retirementSalary = data.expectedRetirementSalary !== undefined 
-      ? data.expectedRetirementSalary 
-      : (data.currentIncome || 0) * 10000 / 12 * 0.3;
-      
-    if (retirementSalary > 0) {
-      for (let i = data.retirementAge; i <= 85; i++) {
-        const annualRetirementIncome = (retirementSalary * 12) / 10000; // 转换为万元
-        table.push({
-          year: i,
-          income: Math.round(annualRetirementIncome * 100) / 100,
-          growthRate: 0, // 退休收入一般不变
-          isRetired: true
-        });
-      }
-    }
-    
-    return table;
   };
 
   const incomeTable = useMemo(() => calculateIncomeTable(), [data, fluctuations]);
