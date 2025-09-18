@@ -264,7 +264,7 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                 id="retirementIncome"
                 type="number"
                 step="0.01"
-                value={data.retirementIncome !== undefined ? data.retirementIncome.toString() : '5000'}
+                value={data.retirementIncome !== undefined ? data.retirementIncome.toString() : ''}
                 onChange={(e) => {
                   const value = e.target.value;
                   if (value === '') {

@@ -145,8 +145,8 @@ const CareerPlanningContent = () => {
   const handlePersonalSave = () => {
     setPersonalSaved(true);
     // 同步到全局状态
-    setPersonalCurrentIncome(personalData.currentIncome.toString());
-    setPersonalRetirementAge(personalData.retirementAge.toString());
+    setPersonalCurrentIncome(personalData.currentIncome?.toString() || '');
+    setPersonalRetirementAge(personalData.retirementAge?.toString() || '60');
     // 计算并写入本地累计收入（元）
     setPersonalFormProgressiveIncome(computeProgressiveIncomeFromForm(personalData));
   };
@@ -155,8 +155,8 @@ const CareerPlanningContent = () => {
   const handlePartnerSave = () => {
     setPartnerSaved(true);
     // 同步到全局状态
-    setPartnerCurrentIncome(partnerData.currentIncome.toString());
-    setPartnerRetirementAge(partnerData.retirementAge.toString());
+    setPartnerCurrentIncome(partnerData.currentIncome?.toString() || '');
+    setPartnerRetirementAge(partnerData.retirementAge?.toString() || '60');
     // 计算并写入本地累计收入（元）
     setPartnerFormProgressiveIncome(computeProgressiveIncomeFromForm(partnerData));
   };
