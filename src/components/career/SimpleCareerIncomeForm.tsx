@@ -574,14 +574,16 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                           fluctuations.some(f => row.year >= f.startYear && row.year <= f.endYear);
                         
                         return (
-                           <TableRow 
-                             key={row.year}
-                             className={
-                               isInFluctuationPeriod 
-                                 ? "bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-400" 
-                                 : ""
-                             }
-                           >
+                          <TableRow 
+                            key={row.year}
+                            className={
+                              row.isRetired 
+                                ? "bg-blue-50 border-l-4 border-blue-400"
+                                : isInFluctuationPeriod 
+                                  ? "bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-400" 
+                                  : ""
+                            }
+                          >
                              <TableCell className={`text-center ${row.isRetired ? 'font-medium text-blue-800' : isInFluctuationPeriod ? 'font-medium text-orange-800' : ''}`}>
                                {row.year}岁
                                {row.isRetired && (
