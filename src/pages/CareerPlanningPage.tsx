@@ -81,64 +81,76 @@ const CareerPlanningContent = () => {
   // 计算表单累计收入（元）
   const computeProgressiveIncomeFromForm = (d: CareerIncomeData) => {
     if (!d) return 0;
-    
+
+    // 安全数值处理
+    const currentAge = Number.isFinite(d.currentAge) ? d.currentAge : 0;
+    const retirementAge = Number.isFinite(d.retirementAge) ? d.retirementAge : 0;
+    const currentIncomeWan = Number.isFinite(d.currentIncome) ? d.currentIncome : 0;
+
     let totalWan = 0;
-    
-    // 如果是已退休状态
+
+    // 已退休：使用退休金
     if (d.currentStatus === 'retired') {
-      if (d.retirementIncome && d.retirementIncome > 0) {
-        // 计算从当前年龄到85岁的退休金总收入
-        const retirementYears = 85 - (d.currentAge || 30) + 1; // 从当前年龄到85岁（包含当前年）
-        const annualRetirementIncome = d.retirementIncome * 12; // 月薪转年薪（元）
-        totalWan = (annualRetirementIncome / 10000) * retirementYears; // 转换为万元
+      const monthlyRetirement = Number.isFinite(d.retirementIncome as number) && d.retirementIncome !== undefined
+        ? (d.retirementIncome as number)
+        : 0;
+      if (monthlyRetirement > 0) {
+        const retirementYears = Math.max(0, 85 - currentAge + 1);
+        const annualRetirementIncome = monthlyRetirement * 12; // 元/年
+        totalWan = (annualRetirementIncome / 10000) * retirementYears; // 万元
       }
       return Math.round(totalWan * 10000);
     }
-    
-    // 未退休状态的计算逻辑（原有逻辑）
-    if (d.currentIncome <= 0 || d.retirementAge <= d.currentAge) return 0;
-    
-    const years = d.retirementAge - d.currentAge;
-    
-    // 计算退休前收入（不包含退休当年）
+
+    // 未退休：若关键值无效，直接返回0
+    if (currentIncomeWan <= 0 || retirementAge <= currentAge) return 0;
+
+    const years = Math.max(0, retirementAge - currentAge);
+
+    // 退休前收入（不包含退休当年）
     for (let i = 0; i < years; i++) {
-      const year = d.currentAge + i;
-      let incomeWan = d.currentIncome;
+      const year = currentAge + i;
+      let incomeWan = currentIncomeWan;
+
       if (d.incomeChange === 'continuous-growth') {
-        const rate = (d.continuousGrowthRate || 1) / 100;
-        incomeWan = d.currentIncome * Math.pow(1 + rate, i);
+        const rate = ((d.continuousGrowthRate ?? 1) / 100);
+        incomeWan = currentIncomeWan * Math.pow(1 + (Number.isFinite(rate) ? rate : 0), i);
       } else if (d.incomeChange === 'continuous-decline') {
-        const rate = (d.continuousDeclineRate || 1) / 100;
-        incomeWan = d.currentIncome * Math.pow(1 - rate, i);
+        const rate = ((d.continuousDeclineRate ?? 1) / 100);
+        const factor = Math.max(0, 1 - (Number.isFinite(rate) ? rate : 0));
+        incomeWan = currentIncomeWan * Math.pow(factor, i);
       } else if (d.incomeChange === 'fluctuation') {
-        const f = d.fluctuations.find(f => year >= f.startYear && year <= f.endYear);
+        const f = d.fluctuations?.find(f => year >= f.startYear && year <= f.endYear);
         if (f) {
-          const yearsInPeriod = year - f.startYear;
-          incomeWan = d.currentIncome * Math.pow(1 + f.growthRate / 100, yearsInPeriod);
+          const yearsInPeriod = Math.max(0, year - f.startYear);
+          const rate = (f.growthRate ?? 0) / 100;
+          incomeWan = currentIncomeWan * Math.pow(1 + rate, yearsInPeriod);
         } else {
-          incomeWan = d.currentIncome;
+          incomeWan = currentIncomeWan;
         }
       } else {
-        incomeWan = d.currentIncome;
+        incomeWan = currentIncomeWan;
       }
+
+      incomeWan = Number.isFinite(incomeWan) ? incomeWan : 0;
       totalWan += incomeWan;
     }
-    
-    // 计算退休后收入（从退休年龄到85岁）
-    // 如果没有设置退休工资，使用默认值：当前收入的30%
+
+    // 退休后收入（从退休年龄到85岁）
     const retirementSalary = d.expectedRetirementSalary !== undefined 
       ? Number(d.expectedRetirementSalary) 
-      : d.currentIncome * 10000 / 12 * 0.3;
-    
-    if (retirementSalary > 0) {
-      const retirementYears = 85 - d.retirementAge + 1; // 从退休年龄到85岁（包含退休当年）
-      const annualRetirementIncome = retirementSalary * 12; // 月薪转年薪（元）
-      totalWan += (annualRetirementIncome / 10000) * retirementYears; // 转换为万元
+      : currentIncomeWan * 10000 / 12 * 0.3;
+
+    const safeRetirementSalary = Number.isFinite(retirementSalary) ? retirementSalary : 0;
+
+    if (safeRetirementSalary > 0) {
+      const retirementYears = Math.max(0, 85 - retirementAge + 1);
+      const annualRetirementIncome = safeRetirementSalary * 12; // 元/年
+      totalWan += (annualRetirementIncome / 10000) * retirementYears; // 万元
     }
-    
+
     return Math.round(totalWan * 10000);
   };
-
   const goToNext = () => {
     navigate('/future-income');
   };
