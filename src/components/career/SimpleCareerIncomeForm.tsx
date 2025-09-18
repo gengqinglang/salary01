@@ -92,7 +92,7 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
     const newFluctuation: IncomeFluctuation = {
       id: Date.now().toString(),
       startYear: newStartYear,
-      endYear: Math.min(newStartYear + 4, data.retirementAge), // 确保不超过退休年龄
+      endYear: Math.min(newStartYear + 4, data.retirementAge - 1), // 确保不超过退休年龄-1
       growthRate: 3
     };
     const newFluctuations = [...fluctuations, newFluctuation];
@@ -455,8 +455,8 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
                          <SelectTrigger className="border-2 border-[#B3EBEF] focus:border-[#B3EBEF] focus:ring-[#B3EBEF]/40">
                            <SelectValue />
                          </SelectTrigger>
-                         <SelectContent className="max-h-60 overflow-y-auto bg-white z-50">
-                           {Array.from({ length: data.retirementAge - data.currentAge + 1 }, (_, i) => data.currentAge + i).map((age) => (
+                          <SelectContent className="max-h-60 overflow-y-auto bg-white z-50">
+                            {Array.from({ length: data.retirementAge - data.currentAge }, (_, i) => data.currentAge + i).map((age) => (
                              <SelectItem key={age} value={age.toString()}>
                                {age}岁
                              </SelectItem>
