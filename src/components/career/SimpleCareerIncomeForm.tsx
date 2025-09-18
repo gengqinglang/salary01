@@ -213,7 +213,10 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
     if (formData.currentStatus === 'retired') {
       return (formData.retirementIncome || 0) >= 0;
     }
-    return formData.currentIncome > 0 && 
+    const validCurrentIncome = typeof formData.currentIncome === 'number' && 
+                              Number.isFinite(formData.currentIncome) && 
+                              formData.currentIncome > 0;
+    return validCurrentIncome && 
            formData.retirementAge > formData.currentAge &&
            (formData.incomeChange !== 'fluctuation' || fluctuations.length > 0);
   };
@@ -580,7 +583,11 @@ const SimpleCareerIncomeForm: React.FC<SimpleCareerIncomeFormProps> = ({
       )}
 
       {/* 收入预测表 - 只在未退休状态下显示 */}
-      {(data.currentStatus || 'not-retired') === 'not-retired' && data.currentIncome > 0 && data.retirementAge > data.currentAge && (
+      {(data.currentStatus || 'not-retired') === 'not-retired' && 
+       typeof data.currentIncome === 'number' && 
+       Number.isFinite(data.currentIncome) && 
+       data.currentIncome > 0 && 
+       data.retirementAge > data.currentAge && (
         <Card className="bg-[#CAF4F7]/20">
           <CardContent className="p-0">
             <div>
