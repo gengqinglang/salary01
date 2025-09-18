@@ -481,12 +481,7 @@ const CareerPlanningContent = () => {
               
               <TabsContent value="partner" className="mt-0">
                 <div className="space-y-4">
-                  {/* 提示信息卡片 */}
-                  <div className="p-3 rounded-lg text-sm leading-relaxed" style={{ backgroundColor: 'rgba(202, 244, 247, 0.2)', color: '#01BCD6' }}>
-                    <span className="font-bold">提示信息</span>：未来伴侣的收入水平会显著影响家庭财务状况，系统已将未来伴侣的收入水平默认设置为与您本人一致，您可根据实际情况进行调整。
-                  </div>
-                  
-                  <SimpleCareerIncomeForm 
+                  <SimpleCareerIncomeForm
                     data={partnerData}
                     onChange={handlePartnerDataChange}
                     onSave={handlePartnerSave}
