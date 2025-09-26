@@ -6,8 +6,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // 导入页面组件
 import CareerPlanningPage from "./pages/CareerPlanningPage";
-import CareerPlanCoachPage from "./pages/CareerPlanCoachPage";
-import AICareerPlanningPage from "./pages/AICareerPlanningPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,10 +36,8 @@ const App = () => (
           <Sonner />
           <BrowserRouter basename={getBaseName()}>
             <Routes>
-              {/* 职业规划相关路由 */}
+              {/* 职业规划页面 */}
               <Route path="/career-planning" element={<CareerPlanningPage />} />
-              <Route path="/career-plan-coach" element={<CareerPlanCoachPage />} />
-              <Route path="/ai-career-planning" element={<AICareerPlanningPage />} />
               
               {/* 默认重定向到职业规划页面 */}
               <Route path="/" element={<Navigate to="/career-planning" replace />} />
